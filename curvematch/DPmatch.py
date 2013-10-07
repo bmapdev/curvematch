@@ -6,9 +6,10 @@ __copyright__ = "Copyright 2013, Shantanu H. Joshi Ahmanson-Lovelace Brain Mappi
                  University of California Los Angeles"
 __email__ = "s.joshi@ucla.edu"
 
-from qshape import qshape
+from qshape import QShape
 import numpy as np
 from sys import stdout
+
 
 def matchq( q1,  q2):
     gamma = []
@@ -44,7 +45,8 @@ def matchq( q1,  q2):
     ynew = np.zeros(shape=(T,),dtype=float)
 
     for i in np.arange(1,T):
-        print i
+        stdout.write("Index: %d   \r" % i)
+        stdout.flush()
         for j in np.arange(1,T):
             minCandE = 10000
             for Num in np.arange(0,NBR_SIZ):

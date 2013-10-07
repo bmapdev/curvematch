@@ -9,13 +9,14 @@ __email__ = "s.joshi@ucla.edu"
 
 from numpy import transpose
 
-class qshape(object):
 
-    def __init__(self,coords=[], n=0, T=0):
+class QShape():
+
+    def __init__(self, coords=[], n=0, T=0):
         self.coords = transpose(coords)
         self.n = n
         self.T = T
 
-        if coords.any():
+        if coords is not None:
             self.n = self.coords.shape[0]
             self.T = self.coords.shape[1]
