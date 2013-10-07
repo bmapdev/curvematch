@@ -10,20 +10,25 @@ Quick Commands to create virtual environment, installs, and tests
 Assume one is in `~/sandbox`, and the path to your EPD python is
 `/usr/local/epd/bin/python`
 
+
 ```
 virtualenv -p /usr/local/epd/bin/python ~/sandbox/myenv --system-site-packages
 
-git clone https://shjoshi@bitbucket.org/shjoshi/shapeio.git #Clone shapeio
+#Clone shapeio
+git clone https://shjoshi@bitbucket.org/shjoshi/shapeio.git 
 
-~/sandbox/myenv/bin/pip install ~/sandbox/shapeio #Install shapeio
+#Install shapeio
+~/sandbox/myenv/bin/pip install ~/sandbox/shapeio 
 
-git clone https://shjoshi@bitbucket.org/shjoshi/curvematch.git #Clone curvematch
+#Clone curvematch
+git clone https://shjoshi@bitbucket.org/shjoshi/curvematch.git 
 
 ~/sandbox/myenv/bin/pip install nose -I #Install Nose
 
 cd ~/sandbox/curvematch
 
-~/sandbox/myenv/bin/nosetests -v -s #Run nosetests
+#Run nosetests
+~/sandbox/myenv/bin/nosetests -v -s 
 ```
 
 
