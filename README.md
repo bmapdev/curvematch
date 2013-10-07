@@ -23,7 +23,8 @@ git clone https://shjoshi@bitbucket.org/shjoshi/shapeio.git
 #Clone curvematch
 git clone https://shjoshi@bitbucket.org/shjoshi/curvematch.git 
 
-~/sandbox/myenv/bin/pip install nose -I #Install Nose
+#Install Nose
+~/sandbox/myenv/bin/pip install nose -I
 
 cd ~/sandbox/curvematch
 
