@@ -16,8 +16,8 @@ from os import path
 from sys import stdout
 
 Settings.output_dir = 'test/data'
-curve1 = 'data/q1_partial.ucf'
-curve2 = 'data/q2_partial.ucf'
+curve1 = 'test/data/q1_partial.ucf'
+curve2 = 'test/data/q2_partial.ucf'
 
 
 def test_DP_match():

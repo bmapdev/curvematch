@@ -12,7 +12,7 @@ from shapeio import curveio
 from curvematch.qshape import QShape
 
 Settings.output_dir = 'test/data'
-curve1 = 'data/curve1.ucf'
+curve1 = 'test/data/curve1.ucf'
 
 
 def test_plotcurve_with_name():
