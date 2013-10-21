@@ -1,5 +1,5 @@
 #!/usr/local/epd/bin/python
-"""Nose Dynamic Programming for matching qshapes"""
+"""Test Dynamic Programming for matching qshapes"""
 
 __author__ = "Shantanu H. Joshi"
 __copyright__ = "Copyright 2012, Shantanu H. Joshi,  \
