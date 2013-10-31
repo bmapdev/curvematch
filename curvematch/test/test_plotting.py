@@ -11,8 +11,8 @@ from curvematch.settings import Settings
 from shapeio import curveio
 from curvematch.qshape import QShape
 
-Settings.output_dir = 'test/data'
-curve1 = 'test/data/curve1.ucf'
+Settings.output_dir = 'curvematch/test/data'
+curve1 = 'curvematch/test/data/curve1.ucf'
 
 
 def test_plotcurve_with_name():
