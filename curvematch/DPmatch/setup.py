@@ -65,17 +65,3 @@ setup(
     ],
     keywords='dynamic-programming optimization',
     )
-
-#setup(
-#    name='DPmatchcy',
-#    cmdclass = {'build_ext': build_ext},
-#    ext_modules = [Extension("DPmatchcy", sources=["DPmatchcy.pyx",
-#                                         "DPmatch.cpp","shape.cpp"],
-#                             include_dirs = [np.get_include(), '.'],
-#                             language='c++', pyrex_gdb=True)],
-#    version = '1.0',
-#    description='cyDPmatch implemented in c++ wrapped by cython',
-#    author='Shantanu Joshi',
-#    author_email='s.joshi@ucla.edu',
-#    requires=['numpy (>=1.3.0)', 'cython (>=0.15.1)']
-#)
