@@ -6,7 +6,6 @@ __copyright__ = "Copyright 2013, Shantanu H. Joshi Ahmanson-Lovelace Brain Mappi
                  University of California Los Angeles"
 __email__ = "s.joshi@ucla.edu"
 
-from qshape import QShape
 import numpy as np
 from sys import stdout
 
@@ -15,10 +14,10 @@ def matchq( q1,  q2):
     gamma = []
     Energy = []
 
-    n1 = q1.n
-    T1 = q1.T
-    n2 = q2.n
-    T2 = q2.T
+    n1 = q1.dim
+    T1 = q1.siz
+    n2 = q2.dim
+    T2 = q2.siz
     if n1 != n2 or T1 != T2:
         stdout.write('\nDimension mismatch. Shape coordinates should have same length.\n')
         return
@@ -28,7 +27,7 @@ def matchq( q1,  q2):
                     [4, 10], [4, 30], [4, 40], [4, 50], [5, 50],[6, 50],[8, 50],[10, 50],[15, 50],[20, 50],[25, 50], [30, 50], [35, 50], [40, 50]])
 
     NBR_SIZ = Nbrs.shape[0]
-    T = q1.T
+    T = q1.siz
 
     Energy = np.zeros(shape=(T, T), dtype=float, order='C')
     Energy[0,:] = 5
@@ -86,8 +85,8 @@ def matchq( q1,  q2):
 
 def match_costq(q1, q2,k,l,i,j):
 
-    n1 = q1.n
-    T1 = q1.T
+    n1 = q1.dim
+    T1 = q1.siz
 
     slope = (float)(i - k)/(j - l)
     if slope == 0:
