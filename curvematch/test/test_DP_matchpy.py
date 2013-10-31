@@ -9,15 +9,15 @@ __email__ = "s.joshi@ucla.edu"
 from curvematch.qshape import QShape
 from shapeio import curveio
 import time
-from curvematch import DPmatch
+from curvematch.DPmatch import DPmatchpy
 import numpy as np
 from curvematch.settings import Settings
 from os import path
 from sys import stdout
 
-Settings.output_dir = 'test/data'
-curve1 = 'test/data/q1_partial.ucf'
-curve2 = 'test/data/q2_partial.ucf'
+Settings.output_dir = 'curvematch/test/test/data'
+curve1 = 'curvematch/test/data/q1_partial.ucf'
+curve2 = 'curvematch/test/data/q2_partial.ucf'
 
 
 def test_DP_match():
@@ -28,7 +28,7 @@ def test_DP_match():
     q1 = QShape(X1)
     q2 = QShape(X2)
     t = time.time()
-    gamma, Energy = DPmatch.matchq(q1,q2)
+    gamma, Energy = DPmatchpy.matchq(q1,q2)
     np.savetxt(path.join(Settings.output_dir, 'gamma.txt'), gamma)
     np.savetxt(path.join(Settings.output_dir, 'Energy.txt'), Energy)
 
