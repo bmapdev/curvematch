@@ -5,4 +5,4 @@ __copyright__ = "Copyright 2013, Shantanu H. Joshi Ahmanson-Lovelace Brain Mappi
                  University of California Los Angeles"
 __email__ = "s.joshi@ucla.edu"
 
-#__all__ = []
+__all__ = ['curvematch', 'DPmatch']
