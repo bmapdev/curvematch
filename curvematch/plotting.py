@@ -20,7 +20,7 @@ def plotcurve(q1, interactive=False, filename=None):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
 
-    if q1.n == 3:
+    if q1.dim == 3:
         ax.plot(q1.coords[0, :], q1.coords[1, :], q1.coords[2, :])
     else:
         ax.plot(q1.coords[0, :], q1.coords[1, :])
