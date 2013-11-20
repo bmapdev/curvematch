@@ -10,7 +10,7 @@ from curvematch.settings import Settings
 from curvematch.qshape import QShape
 from shapeio import curveio
 
-Settings.output_dir = 'test/data'
-curve1 = 'test/data/curve1.ucf'
+Settings.output_dir = 'curvematch/test/data'
+curve1 = 'curvematch/test/data/curve1.ucf'
 
 
