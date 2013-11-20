@@ -33,7 +33,7 @@ class Curve():
     def repose_curve(self):
         pass
 
-    def curve_length(self):
+    def length(self):
         arc_length = empty((self.dim, self.siz))
         curve_gradient = diff(self.coords)
         for i in range(0, self.siz):
