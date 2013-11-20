@@ -13,7 +13,7 @@ class Settings(object):
     def __init__(self, interactive_mode=False, backend='PDF'):
         self.interactive_mode = interactive_mode
         self.backend = backend
+        self.output_dir = '.'
+        self.closed = True     # Analysis of closed curves
 
-    interactive_mode = False
-    backend = 'PDF'
-    output_dir = '.'
+
