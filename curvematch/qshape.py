@@ -21,6 +21,9 @@ class QShape():
             self.dim = self.coords.shape[0]
             self.siz = self.coords.shape[1]
 
+    def __add__(self, x):
+        return QShape(self.coords + x)
+
     def fromcurve(self, curve):
         pass
 
