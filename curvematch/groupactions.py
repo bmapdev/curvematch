@@ -19,4 +19,3 @@ def find_best_rotation():
 def reparameterize_shift_origin():
     pass
 
-
