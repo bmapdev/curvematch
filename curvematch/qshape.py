@@ -17,7 +17,11 @@ import utils
 class QShape():
 
     def __init__(self, coords=[], dim=0, siz=0):
-        self.coords = np.transpose(coords)
+        n, T = coords.shape
+        if n > T:
+            self.coords = np.transpose(coords)
+        else:
+            self.coords = coords
         self.dim = dim
         self.siz = siz
 
@@ -25,8 +29,21 @@ class QShape():
             self.dim = self.coords.shape[0]
             self.siz = self.coords.shape[1]
 
-    def __add__(self, x):
-        return QShape(self.coords + x)
+    def __add__(self, q):
+        return QShape(self.coords + q.coords)
+
+    def __sub__(self, q):
+        return QShape(self.coords - q.coords)
+
+    def __mul__(self, x):
+        return QShape(self.coords * x)
+
+    def __rmul__(self, x):
+        return QShape(self.coords * x)
+
+    def __div__(self, x):
+        return QShape(self.coords / x)
+
 
     def from_curve(self, p):
         shape_p = np.shape(p)
@@ -61,9 +78,10 @@ class QShape():
         return(p)
 
 
-    def project_B(q):
-        qnew = q/np.sqrt(utils.inner_prod(q,q))
-        return(qnew)
+    def project_B(self):
+        self.coords = self.coords/np.sqrt(utils.inner_prod(self, self))
+        #qnew = q/np.sqrt(utils.inner_prod(q,q))
+        #return qnew
 
 
     def projectC(self,q):
