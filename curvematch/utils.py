@@ -9,6 +9,7 @@ __email__ = "ayersb@ucla.edu"
 
 import numpy as np
 from math import pi
+from numpy import linalg as LA
 
 
 def inner_prod(q1, q2):
@@ -22,30 +23,28 @@ def shift_vertices(p, tau):
         pn = p
     elif tau > 0:
         t = abs(tau)
-        pn = np.zeros(shape_p,np.int32)
-        pn[:, :-t] = p[:,t: ]
-        pn[:, -t:  ] = p[:, :t]
+        pn = np.zeros(shape_p, np.int32)
+        pn[:, :-t] = p[:, t:]
+        pn[:, -t:] = p[:, :t]
     elif tau < 0:
         t = abs(tau)
         pn = np.zeros(shape_p,np.int32)
-        pn[:, :t] = p[:,-t:  ]
-        pn[:,t: ] = p[:,  :-t]
+        pn[:, :t] = p[:, -t:]
+        pn[:, t:] = p[:, :-t]
     return pn
 
 
-def Find_Best_Rotation(q1,q2):
+def Find_Best_Rotation(q1, q2):
     #assumes starting points are fixed
-    shape_q = np.shape(q1)    
-    n,T = shape_q
     A = q1*q2.transpose()
-    U,S,V = LA.svd(A)
-    if( np.absolute(np.det(U * np.det(V) -1)) < 10*np.spacing(1) ):
-        S = np.eye(n)
+    U, S, V = LA.svd(A)
+    if np.absolute(np.det(U*np.det(V) -1)) < 10*np.spacing(1) :
+        S = np.eye(q1.dim)
     else:
-        S = np.eye(n)
-        S[:,-1] = -S[:,-1]
-    R     = U*S*V
+        S = np.eye(q1.dim)
+        S[:, -1] = -S[:, -1]
+    R = U*S*V
     q2new = R*q2
-    return(q2new)
+    return q2new
 
 
