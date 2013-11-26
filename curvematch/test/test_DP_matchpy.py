@@ -15,7 +15,7 @@ from curvematch.settings import Settings
 from os import path
 from sys import stdout
 
-Settings.output_dir = 'curvematch/test/test/data'
+Settings.output_dir = 'curvematch/test/data'
 curve1 = 'curvematch/test/data/q1_partial.ucf'
 curve2 = 'curvematch/test/data/q2_partial.ucf'
 
