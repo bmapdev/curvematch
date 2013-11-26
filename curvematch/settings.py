@@ -15,5 +15,6 @@ class Settings(object):
         self.backend = backend
         self.output_dir = '.'
         self.closed = True     # Analysis of closed curves
+        self.steps = 7
 
 
