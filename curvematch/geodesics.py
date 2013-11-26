@@ -10,6 +10,7 @@ from curvematch.settings import Settings
 from curvematch.DPmatch import DPmatchcy
 import numpy as np
 import utils
+from qshape import QShape
 
 class GeodesicsClosed():
     pass
@@ -85,8 +86,21 @@ def compute_ambient(q1, q2, stp):
     return geodesic_path
 
 
-def compute_on_sphere():
-    pass
+def compute_on_sphere(q1, q2, steps):
+
+    theta = np.arccos(utils.inner_prod(q1, q2))
+    f = q2 - utils.inner_prod(q1, q2)*q1
+    f = theta*f/np.sqrt(utils.inner_prod(f, f))
+    qt = QShape(q1.coords)
+    geodesic_sphere = []
+    for tau in range(0, steps):
+        dt = 1.0*tau/steps
+        vnorm = np.sqrt(utils.inner_prod(f, f))
+        qt = np.cos(dt*vnorm)*q1 + np.sin(dt*vnorm)*f/vnorm
+        qt.project_B()
+        geodesic_sphere.append(qt)
+
+    return geodesic_sphere
 
 
 def compute_for_closed_curves(q1, q2, settings):
