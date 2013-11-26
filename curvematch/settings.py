@@ -10,11 +10,9 @@ __email__ = "s.joshi@ucla.edu"
 
 class Settings(object):
 
-    def __init__(self, interactive_mode=False, backend='PDF'):
-        self.interactive_mode = interactive_mode
-        self.backend = backend
-        self.output_dir = '.'
-        self.closed = True     # Analysis of closed curves
-        self.steps = 7
-
+    steps = 7
+    interactive_mode = False
+    backend = 'PDF'
+    output_dir = '.'
+    closed = True     # Analysis of closed curves
 
