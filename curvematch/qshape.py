@@ -62,8 +62,9 @@ class QShape():
         for i in xrange(self.siz):
             q[:,i] = v[:,i]/ np.sqrt(LA.norm(v[:,i]))
 
-        self.coords = self.ProjectC(q)
-        return(q)
+        self.ProjectB(q)
+        #self.ProjectC(q)
+        #return(q)
 
 
     def to_curve(self,q):  #Return a curve object????
