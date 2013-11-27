@@ -7,11 +7,13 @@ __copyright__ = "Copyright 2013, Shantanu H. Joshi, Brandon Ayers, \
                  Ahmanson-Lovelace Brain Mapping Center, University of California Los Angeles"
 __email__ = "s.joshi@ucla.edu"
 
+from math import pi
+
 import numpy as np
 import scipy as sp
 from scipy import linalg as LA
 from scipy import integrate
-from math import pi
+
 import utils
 
 class QShape():
@@ -24,10 +26,11 @@ class QShape():
             self.coords = coords
         self.dim = dim
         self.siz = siz
-
+        self.shape = (self.dim,self.siz)
         if coords is not None:
             self.dim = self.coords.shape[0]
             self.siz = self.coords.shape[1]
+            self.shape = (self.dim,self.siz)
 
     def __add__(self, q):
         return QShape(self.coords + q.coords)
@@ -44,35 +47,32 @@ class QShape():
     def __div__(self, x):
         return QShape(self.coords / x)
 
-
-    def from_curve(self, p):
-        shape_p = np.shape(p)
-        n = shape_p[0]
-        Tcoord = shape_p[1]
-
+    def from_curve(self, curve):
+        self.dim,self.siz = curve.dim, curve.siz
+        #n = shape_p[0]
+        #Tcoord = shape_p[1]
         # Compute the gradient of all row vectors in p
-        pdiff = np.zeros(shape_p)
-        for i in xrange(n):
-            pdiff[i,:] = np.gradient( p[i,:], 2*pi /Tcoord )
-        v = np.zeros(shape_p)
-        for i in xrange(n):
-            v[i,:] = ( 2 * pi / Tcoord ) * pdiff[i,:]
-        q = np.zeros(shape_p)
-        for i in xrange(Tcoord):
+        pdiff = np.zeros(self.shape)
+        for i in xrange(self.dim):
+            pdiff[i,:] = np.gradient( curve.coords[i,:], 2*pi /self.siz )
+        v = np.zeros(self.shape)
+        for i in xrange(self.dim):
+            v[i,:] = ( 2 * pi / self.siz ) * pdiff[i,:]
+        q = np.zeros(self.shape)
+        for i in xrange(self.siz):
             q[:,i] = v[:,i]/ np.sqrt(LA.norm(v[:,i]))
 
-        q = self.ProjectC(q)
+        self.coords = self.ProjectC(q)
         return(q)
 
-    def to_curve(self,q):
-        shape_q = np.shape(q)
-        n,T = shape_q[0],shape_q[1]
-        s = np.linspace(0,2*pi,T)
-        qnorm = np.zeros(T)
-        for i in xrange(T):
+
+    def to_curve(self,q):  #Return a curve object????
+        s = np.linspace(0,2*pi,self.siz)
+        qnorm = np.zeros(self.siz)
+        for i in xrange(self.siz):
             qnorm[i] = LA.norm(q[:,i],2)
         p = np.zeros(np.shape(q))
-        for i in xrange(n):
+        for i in xrange(self.dim):
             temp = q[i,:] * qnorm
             p[i,:] = integrate.cumtrapz(temp,s,initial=0)
         return(p)
@@ -143,6 +143,7 @@ class QShape():
 
         return(qnew)
 
+
     def form_basis_normal_a(self,q):
         shape_q = np.shape(q)
         n = shape_q[0]
@@ -174,6 +175,7 @@ class QShape():
         sqrt_gamma_t = np.tile(np.sqrt(gamma_t),(5,1))
         qn = q_composed_gamma * sqrt_gamma_t;
         return(qn)
+
 
     def Estimate_Gamma(self,q):
         p = self.to_curve(q)
