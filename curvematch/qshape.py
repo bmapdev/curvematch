@@ -10,15 +10,17 @@ __email__ = "s.joshi@ucla.edu"
 from math import pi
 
 import numpy as np
-import scipy as sp
+import scipy
 from scipy import linalg as LA
 from scipy import integrate
 
+import curve
 import utils
+
 
 class QShape():
 
-    def __init__(self, coords=[], dim=0, siz=0):
+    def __init__(self, coords=np.array([]), dim=0, siz=0):
         n, T = coords.shape
         if n > T:
             self.coords = np.transpose(coords)
@@ -26,11 +28,11 @@ class QShape():
             self.coords = coords
         self.dim = dim
         self.siz = siz
-        self.shape = (self.dim,self.siz)
+        self.shape = (self.dim, self.siz)
         if coords is not None:
             self.dim = self.coords.shape[0]
             self.siz = self.coords.shape[1]
-            self.shape = (self.dim,self.siz)
+            self.shape = (self.dim, self.siz)
 
     def __add__(self, q):
         return QShape(self.coords + q.coords)
@@ -48,44 +50,37 @@ class QShape():
         return QShape(self.coords / x)
 
     def from_curve(self, curve):
-        self.dim,self.siz = curve.dim, curve.siz
-        #n = shape_p[0]
-        #Tcoord = shape_p[1]
-        # Compute the gradient of all row vectors in p
+        self.dim, self.siz = curve.dim, curve.siz
         pdiff = np.zeros(self.shape)
         for i in xrange(self.dim):
-            pdiff[i,:] = np.gradient( curve.coords[i,:], 2*pi /self.siz )
+            pdiff[i, :] = np.gradient(curve.coords[i, :], 2*pi / self.siz)
         v = np.zeros(self.shape)
         for i in xrange(self.dim):
-            v[i,:] = ( 2 * pi / self.siz ) * pdiff[i,:]
+            v[i, :] = (2 * pi / self.siz) * pdiff[i, :]
         q = np.zeros(self.shape)
         for i in xrange(self.siz):
-            q[:,i] = v[:,i]/ np.sqrt(LA.norm(v[:,i]))
-
-        self.ProjectB(q)
+            q[:, i] = v[:, i] / np.sqrt(LA.norm(v[:, i]))
+        self.project_b(q)
         #self.ProjectC(q)
-        #return(q)
 
-
-    def to_curve(self,q):  #Return a curve object????
-        s = np.linspace(0,2*pi,self.siz)
+    def to_curve(self):  # Return a curve object? Should we import curve?
+        s = np.linspace(0, 2*pi, self.siz)
         qnorm = np.zeros(self.siz)
         for i in xrange(self.siz):
-            qnorm[i] = LA.norm(q[:,i],2)
-        p = np.zeros(np.shape(q))
+            qnorm[i] = LA.norm(self.coords[:,i],2)
+        p = curve.Curve(np.zeros(self.shape),[],self.dim,self.siz)
         for i in xrange(self.dim):
-            temp = q[i,:] * qnorm
-            p[i,:] = integrate.cumtrapz(temp,s,initial=0)
-        return(p)
+            temp = self.coords[i, :] * qnorm
+            p.coords[i, :] = integrate.cumtrapz(temp, s, initial=0)
+        return p
 
-
-    def project_B(self):
+    def project_b(self):
         self.coords = self.coords/np.sqrt(utils.inner_prod(self, self))
         #qnew = q/np.sqrt(utils.inner_prod(q,q))
         #return qnew
 
 
-    def projectC(self,q):
+    def project_c(self, q):
         shape_q = np.shape(q)
         n = shape_q[0]
         T = shape_q[1]
@@ -144,50 +139,40 @@ class QShape():
 
         return(qnew)
 
+    def form_basis_normal_a(self):
+        e = np.eye(self.dim)
+        ev = np.zeros((self.dim, self.siz, self.dim))
+        for i in xrange(self.dim):
+            ev[:, :, i] = np.tile(e[:, i], (self.siz, 1)).transpose()
+            qnorm = np.zeros(self.siz)
+        for i in xrange(self.siz):
+            qnorm[i] = LA.norm(self.coords[:, i])
+        del_g = {}
+        for i in xrange(self.dim):
+            tmp1 = np.tile((self.coords[i, :] / qnorm), (self.dim,1))
+            tmp2 = np.tile(qnorm, (self.dim, 1))
+            del_g[i] = tmp1*self.coords + tmp2*ev[:, :, i]
+        return del_g
 
-    def form_basis_normal_a(self,q):
-        shape_q = np.shape(q)
-        n = shape_q[0]
-        T = shape_q[1]
-        e = np.eye(n)
-
-        Ev = np.zeros((n,T,n))
-        for i in xrange(n):
-            Ev[:,:,i] = np.tile(e[:,i],(T,1) ).transpose()
-            qnorm = np.zeros(T)
-        for i in xrange(T):
-            qnorm[i] = LA.norm(q[:,i])
-        delG = {}
-        for i in xrange(n):
-            tmp1 = np.tile( (q[i,:] / qnorm) ,(n,1))
-            tmp2 = np.tile( qnorm ,(n,1) )
-            delG[i] = tmp1*q + tmp2*Ev[:,:,i]
-        return delG
-
-
-    def Group_Action_by_Gamma(self,q,gamma):
-        shape_q = np.shape(q)
-        n,T = shape_q
+    def group_action_by_gamma(self, gamma):
         #gamma_orig = Estimate_Gamma(q)
-        gamma_t = np.gradient(gamma,2*pi/(T-1))
-        q_composed_gamma = np.zeros(shape_q)
-        for i in xrange(n):
-            q_composed_gamma[i,:] = np.interp(np.linspace(0,2*pi,T),q[i,:],gamma)  #Can not specify "nearest" method
-        sqrt_gamma_t = np.tile(np.sqrt(gamma_t),(5,1))
-        qn = q_composed_gamma * sqrt_gamma_t;
-        return(qn)
+        gamma_t = np.gradient(gamma, 2*pi/(self.siz-1))
+        q_composed_gamma = np.zeros(self.shape)
+        for i in xrange(self.dim):
+            q_composed_gamma[i, :] = np.interp(np.linspace(0, 2*pi, self.siz),
+                                               self.coords[i, :], gamma)  # Can not specify "nearest" method
+        sqrt_gamma_t = np.tile(np.sqrt(gamma_t), (self.dim, 1))  # Possible error?
+        qn = q_composed_gamma * sqrt_gamma_t
+        return qn
 
-
-    def Estimate_Gamma(self,q):
-        p = self.to_curve(q)
-        shape_q = np.shape(p)
-        n,T = shape_q
-
+    def estimate_gamma(self):
+        p = self.to_curve()
         #Evaluate the arc-length function
-        pdiff = np.diff(p,1,1)
-        ds = np.sqrt(np.sum(pdiff**2,1)) * T
-        gamma = integrate.cumsum(ds)*2*pi/max(integrate.cumsum(ds))
-        return(gamma)
+        s = np.linspace(0,2*pi,self.siz)
+        pgrad = np.gradient(p.coords, 2*pi/np.siz)
+        ds = np.sqrt(np.sum(pgrad**2, 0)) * np.siz
+        gamma = integrate.cumtrapz(ds, s) * 2*pi/np.max(integrate.cumtrapz(ds,s))
+        return gamma
 
 
 
