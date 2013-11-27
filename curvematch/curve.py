@@ -7,6 +7,9 @@ __copyright__ = "Copyright 2013, Shantanu H. Joshi, Brandon Ayers, \
                  Ahmanson-Lovelace Brain Mapping Center, University of California Los Angeles"
 __email__ = "s.joshi@ucla.edu"
 
+
+import numpy as np
+
 from shapeio import curveio
 from numpy import transpose, array, empty, diff, cumsum, interp, linspace, logical_or, gradient, sqrt
 from numpy.linalg import norm
@@ -14,16 +17,17 @@ from numpy.linalg import norm
 
 class Curve():
 
-    def __init__(self, coords=[], attributes=[], dim=0, siz=0):
+    def __init__(self, coords=np.array([]), attributes=[], dim=0, siz=0):
         self.coords = transpose(coords)
         self.attributes = attributes
         self.dim = dim
         self.siz = siz
+        self.shape = (self.dim, self.siz)
 
         if coords is not None:
             self.dim = self.coords.shape[0]
             self.siz = self.coords.shape[1]
-
+            self.shape = (self.dim, self.siz)
     def winding_number(self):
         pass
 
