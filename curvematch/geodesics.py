@@ -38,7 +38,6 @@ def compute_flow(q1, tangent_vect, step):
         #qt = ProjectB(qt)
         geodesic_path.append(qt)
 
-
         #tangent_vect = project_tangent(tangent_vect, qt)
         tangent_vect = tangent_vect*norm/np.sqrt(utils.inner_prod(tangent_vect, tangent_vect))
 
@@ -62,10 +61,9 @@ def parallel_transport_tangent(tangent_vect, q1, q2):
     else:
         #parallel_vect = project_tangent(tangent_vect, q2)
         #parallel_vect = parallel_vect*norm/np.sqrt(utils.inner_prod(parallel_vect, parallel_vect))
-        pass
+        raise ValueError("Not yet implemented for cases where norm > 0.0001")
 
     return parallel_vect
-
 
 
 def compute_path_derivative(geodesic_path):
@@ -126,7 +124,7 @@ def project_tangent(f,q):
     return f - q * utils.inner_prod(f, q)
 
 
-def dAlpha_dt(alpha):
+def compute_cov_derivative_path(alpha):
     n, T, k = np.shape(alpha)
     stp = k - 1
     alpha_dt = np.zeros(np.shape(alpha))
