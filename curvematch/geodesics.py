@@ -6,10 +6,12 @@ __copyright__ = "Copyright 2012, Shantanu H. Joshi, Brandon Ayers, \
                  Ahmanson-Lovelace Brain Mapping Center, University of California Los Angeles"
 __email__ = "s.joshi@ucla.edu"
 
+
+import numpy as np
+
+import utils
 from curvematch.settings import Settings
 from curvematch.DPmatch import DPmatchcy
-import numpy as np
-import utils
 from qshape import QShape
 
 class GeodesicsClosed():
@@ -118,4 +120,8 @@ def compute_for_open_curves(q1, q2, settings):
     #q2n = GroupactionGamma(q2,gamma)
 
     return
+
+
+def project_tangent(f,q):
+    return f - q * utils.inner_prod(f, q)
 
