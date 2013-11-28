@@ -125,3 +125,12 @@ def compute_for_open_curves(q1, q2, settings):
 def project_tangent(f,q):
     return f - q * utils.inner_prod(f, q)
 
+
+def dAlpha_dt(alpha):
+    n, T, k = np.shape(alpha)
+    stp = k - 1
+    alpha_dt = np.zeros(np.shape(alpha))
+    for tau in xrange(1,k):
+        alpha_dt[:, :, tau] = stp*(alpha[:, :, tau] - alpha[:, :, tau-1])
+        alpha_dt[:, :, tau] = project_tangent(alpha_dt[:,:, tau],alpha[:, :, tau])
+    return alpha_dt
