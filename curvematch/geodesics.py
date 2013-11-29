@@ -45,12 +45,12 @@ def compute_flow(q1, tangent_vect, step):
 
 
 def compute_Palais_inner_prod(tangent_vect1, tangent_vect2):
-    step = tangent_vect1.shape[2]
-    inner_prod_val = np.zeros((0, step))
-    for i in range(0, step):
-        inner_prod_val[i] = utils.inner_prod(tangent_vect1[:, :, i], tangent_vect2[:, :, i])
+    steps = len(tangent_vect1)
+    inner_prod_val = np.zeros((0, steps))
+    for i in range(0, steps):
+        inner_prod_val[i] = utils.inner_prod(tangent_vect1[i].coords, tangent_vect2[i].coords)
 
-    return np.trapz(inner_prod_val, np.linspace(0, 1, step))
+    return np.trapz(inner_prod_val, np.linspace(0, 1, steps))
 
 def parallel_transport_tangent(tangent_vect, q1, q2):
     # TODO uncomment project to tangent
