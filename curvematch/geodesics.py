@@ -78,6 +78,14 @@ def compute_path_derivative(geodesic_path):
     return path_derivative
 
 
+def compute_path_length(path_dt):
+    steps = len(path_dt)
+    sqrt_inner_prod_val = np.zeros((0, steps))
+    for tau in range(0, steps):
+        sqrt_inner_prod_val[tau] = utils.inner_prod(path_dt[tau].coords, path_dt[tau].coords)
+
+    return np.trapz(sqrt_inner_prod_val, np.linspace(0, 1, steps))
+
 def compute_ambient(q1, q2, stp):
     geodesic_path = np.zeros((q1.dim, q1.siz, stp))
     for tau in range(0, stp):
