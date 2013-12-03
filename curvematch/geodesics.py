@@ -101,7 +101,7 @@ def compute_on_sphere(q1, q2, steps):
     f = theta*f/np.sqrt(utils.inner_prod(f, f))
     qt = QShape(q1.coords)
     geodesic_sphere = []
-    for tau in range(0, steps):
+    for tau in xrange(0, steps):
         dt = 1.0*tau/steps
         vnorm = np.sqrt(utils.inner_prod(f, f))
         qt = np.cos(dt*vnorm)*q1 + np.sin(dt*vnorm)*f/vnorm
@@ -133,10 +133,44 @@ def project_tangent(f,q):
 
 
 def compute_cov_derivative_path(alpha):
-    n, T, k = np.shape(alpha)
-    stp = k - 1
-    alpha_dt = np.zeros(np.shape(alpha))
-    for tau in xrange(1,k):
-        alpha_dt[:, :, tau] = stp*(alpha[:, :, tau] - alpha[:, :, tau-1])
-        alpha_dt[:, :, tau] = project_tangent(alpha_dt[:,:, tau],alpha[:, :, tau])
+    n, T = np.shape(alpha[0])
+    stp = len(alpha) - 1
+    alpha_dt = []
+    for tau in xrange(1,len(alpha)):
+        tmp = stp*(alpha[tau] - alpha[tau-1])
+        alpha_dt.append(project_tangent(tmp[:, :, tau], tmp[:, :, tau]))
     return alpha_dt
+
+
+def compute_for_open_curves(q1,q2,steps):
+    inner_product = utils.inner_prod(q1,q2)
+    th = np.acos(inner_product)
+    f = q2.coords - inner_product * q1.coords
+    f = th * f / np.sqrt(utils.inner_prod(f, f))
+
+    alpha = []
+    for tau in xrange(0,steps+1):
+        cs = compute_on_sphere(q1, f, float(tau)/steps)
+        for q in cs:
+            q.project_b
+        alpha.append(cs)
+    alpha_t = compute_cov_derivative_path(alpha)
+    alpha_pip = compute_Palais_inner_prod(alpha_t ,alpha_t)
+    alpha_path_len = compute_path_length(alpha_t)
+    return alpha,alpha_t,alpha_pip,alpha_path_len
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
