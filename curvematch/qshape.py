@@ -141,17 +141,17 @@ class QShape():
 
     def form_basis_normal_a(self):
         e = np.eye(self.dim)
-        ev = np.zeros((self.dim, self.siz, self.dim))
+        ev = []
         for i in xrange(self.dim):
-            ev[:, :, i] = np.tile(e[:, i], (self.siz, 1)).transpose()
+            ev.append( np.tile(e[:, i], (self.siz, 1)).transpose())
             qnorm = np.zeros(self.siz)
         for i in xrange(self.siz):
             qnorm[i] = LA.norm(self.coords[:, i])
         del_g = {}
         for i in xrange(self.dim):
-            tmp1 = np.tile((self.coords[i, :] / qnorm), (self.dim,1))
+            tmp1 = np.tile((self.coords[i, :] / qnorm), (self.dim, 1))
             tmp2 = np.tile(qnorm, (self.dim, 1))
-            del_g[i] = tmp1*self.coords + tmp2*ev[:, :, i]
+            del_g[i] = tmp1*self.coords + tmp2*ev[i]
         return del_g
 
     def group_action_by_gamma(self, gamma):
