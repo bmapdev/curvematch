@@ -14,6 +14,14 @@ from curvematch.settings import Settings
 from curvematch.DPmatch import DPmatchcy
 from qshape import QShape
 
+
+class Geodesic():
+    path = []
+    gamma = []
+    tangent_vect = []
+    geodesic_distance = 0
+
+
 class GeodesicsClosed():
     pass
 
@@ -158,6 +166,19 @@ def compute_for_open_curves(q1,q2,steps):
     alpha_pip = compute_Palais_inner_prod(alpha_t ,alpha_t)
     alpha_path_len = compute_path_length(alpha_t)
     return alpha,alpha_t,alpha_pip,alpha_path_len
+
+
+def compute_for_open_curves_elastic(q1, q2, settings):
+
+    geodesic = Geodesic()
+    alpha, alpha_t, alpha_pip, alpha_path_len = compute_for_open_curves(q1, q2, settings.steps)
+    geodesic.path = alpha
+    geodesic.tangent_vect = alpha_t
+    geodesic.geodesic_distance = alpha_path_len
+
+
+
+
 
 
 
