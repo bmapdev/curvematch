@@ -14,7 +14,6 @@ from numpy import linalg as LA
 from shapeio import curveio
 
 
-
 class Curve():
 
     def __init__(self, coords=np.array([]), attributes=[], dim=0, siz=0):
@@ -28,6 +27,7 @@ class Curve():
             self.dim = self.coords.shape[0]
             self.siz = self.coords.shape[1]
             self.shape = (self.dim, self.siz)
+
     def winding_number(self):
         pass
 
