@@ -20,19 +20,19 @@ import utils
 
 class QShape():
 
-    def __init__(self, coords=np.array([]), dim=0, siz=0):
-        n, T = coords.shape
-        if n > T:
-            self.coords = np.transpose(coords)
+    def __init__(self, coords=np.array([])):
+
+        if coords.size != 0:
+            n, T = coords.shape
+            if n > T:
+                self.coords = np.transpose(coords)
+            else:
+                self.coords = coords
+            self.dim, self.siz = self.coords.shape
         else:
-            self.coords = coords
-        self.dim = dim
-        self.siz = siz
+            self.dim = 0
+            self.siz = 0
         self.shape = (self.dim, self.siz)
-        if coords is not None:
-            self.dim = self.coords.shape[0]
-            self.siz = self.coords.shape[1]
-            self.shape = (self.dim, self.siz)
 
     def __add__(self, q):
         return QShape(self.coords + q.coords)
@@ -49,18 +49,36 @@ class QShape():
     def __div__(self, x):
         return QShape(self.coords / x)
 
+    def from_curve_file(self, filename):
+        curve1 = curve.Curve()
+        curve1.readcurve(filename)
+
+        self.from_curve(curve1)
+
     def from_curve(self, curve):
-        self.dim, self.siz = curve.dim, curve.siz
-        pdiff = np.zeros(self.shape)
-        for i in xrange(self.dim):
-            pdiff[i, :] = np.gradient(curve.coords[i, :], 2*pi / self.siz)
-        v = np.zeros(self.shape)
-        for i in xrange(self.dim):
-            v[i, :] = (2 * pi / self.siz) * pdiff[i, :]
-        q = np.zeros(self.shape)
-        for i in xrange(self.siz):
-            q[:, i] = v[:, i] / np.sqrt(LA.norm(v[:, i]))
-        self.project_b(q)
+
+        dim, siz = curve.dim, curve.siz
+        if dim > siz:
+            coords = np.transpose(curve.coords)
+            dim, siz = coords.shape
+        else:
+            coords = curve.coords
+
+        pdiff = np.zeros(coords.shape)
+        for i in xrange(dim):
+            pdiff[i, :] = np.gradient(coords[i, :], 2*pi / siz)
+        v = np.zeros(coords.shape)
+        for i in xrange(dim):
+            v[i, :] = (2 * pi / siz) * pdiff[i, :]
+        coords = np.zeros(coords.shape)
+        for i in xrange(siz):
+            coords[:, i] = v[:, i] / np.sqrt(LA.norm(v[:, i]))
+
+        self.coords = coords
+        self.dim = dim
+        self.siz = siz
+        self.shape = (self.dim, self.siz)
+        self.project_b()
         #self.ProjectC(q)
 
     def to_curve(self):  # Return a curve object? Should we import curve?
@@ -75,7 +93,7 @@ class QShape():
         return p
 
     def project_b(self):
-        self.coords = self.coords/np.sqrt(utils.inner_prod(self, self))
+        self.coords = self.coords/np.sqrt(utils.inner_prod(self.coords, self.coords))
         #qnew = q/np.sqrt(utils.inner_prod(q,q))
         #return qnew
 
@@ -92,7 +110,7 @@ class QShape():
         J = np.zeros( (n,n) )
         s = np.linspace(0,2*pi,T)
 
-        qnew = q / np.sqrt(utils.inner_prod(q,q))
+        qnew = q / np.sqrt(utils.inner_prod(q.coords, q.coords))
         C = {}
         while LA.norm(res) > epsilon:
             if itr > 300:
@@ -117,13 +135,13 @@ class QShape():
             C[itr] = LA.norm(res)
             cond_J = LA.cond(J)
             if LA.norm(res) < epsilon:
-                qnew = qnew/np.sqrt(utils.inner_prod(qnew,qnew))
+                qnew = qnew/np.sqrt(utils.inner_prod(qnew.coords, qnew.coords))
                 return(qnew)
 
             if  np.isnan(cond_J) or np.isinf(cond_J) or (cond_J < 0.1):
                 print '\nProjection may not be accurate\n'
                 qnew = q
-                qnew = qnew/np.sqrt(utils.inner_prod(qnew,qnew))
+                qnew = qnew/np.sqrt(utils.inner_prod(qnew.coords, qnew.coords))
                 return(qnew)
             else:
                 x = LA.solve(J ,res.T)
@@ -134,7 +152,7 @@ class QShape():
                 qnew += temp
 
                 itr += 1  #Iterator for while loop
-        qnew = qnew/np.sqrt(utils.inner_prod(qnew,qnew))
+        qnew = qnew/np.sqrt(utils.inner_prod(qnew.coords, qnew.coords))
         print("What?")
 
         return(qnew)
