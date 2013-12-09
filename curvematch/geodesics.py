@@ -54,7 +54,7 @@ def compute_flow(q1, tangent_vect, step):
 
 def compute_Palais_inner_prod(tangent_vect1, tangent_vect2):
     steps = len(tangent_vect1)
-    inner_prod_val = np.zeros((0, steps))
+    inner_prod_val = np.zeros(steps)
     for i in range(0, steps):
         inner_prod_val[i] = utils.inner_prod(tangent_vect1[i].coords, tangent_vect2[i].coords)
 
@@ -82,15 +82,15 @@ def compute_path_derivative(geodesic_path):
 
     for tau in range(2, step+1):
         path_derivative[:, :, tau] = step*(geodesic_path[:, :, tau] - geodesic_path[:, :, tau-1])
-        #path_derivative[:, :, tau] = project_on_tangent_space(path_derivative[:, :, tau])
+        # path_derivative[:, :, tau] = project_tangent(path_derivative[:, :, tau])
     return path_derivative
 
 
 def compute_path_length(path_dt):
     steps = len(path_dt)
-    sqrt_inner_prod_val = np.zeros((0, steps))
+    sqrt_inner_prod_val = np.zeros(steps)
     for tau in range(0, steps):
-        sqrt_inner_prod_val[tau] = utils.inner_prod(path_dt[tau].coords, path_dt[tau].coords)
+        sqrt_inner_prod_val[tau] = np.sqrt(utils.inner_prod(path_dt[tau].coords, path_dt[tau].coords))
 
     return np.trapz(sqrt_inner_prod_val, np.linspace(0, 1, steps))
 
@@ -104,16 +104,16 @@ def compute_ambient(q1, q2, stp):
 
 def compute_on_sphere(q1, q2, steps):
 
-    theta = np.arccos(utils.inner_prod(q1, q2))
-    f = q2 - utils.inner_prod(q1, q2)*q1
-    f = theta*f/np.sqrt(utils.inner_prod(f, f))
+    theta = np.arccos(utils.inner_prod(q1.coords, q2.coords))
+    f = q2 - utils.inner_prod(q1.coords, q2.coords)*q1
+    f = theta*f/np.sqrt(utils.inner_prod(f.coords, f.coords))
     qt = QShape(q1.coords)
     geodesic_sphere = []
-    for tau in xrange(0, steps):
+    for tau in xrange(0, steps+1):
         dt = 1.0*tau/steps
-        vnorm = np.sqrt(utils.inner_prod(f, f))
+        vnorm = np.sqrt(utils.inner_prod(f.coords, f.coords))
         qt = np.cos(dt*vnorm)*q1 + np.sin(dt*vnorm)*f/vnorm
-        qt.project_B()
+        qt.project_b()
         geodesic_sphere.append(qt)
 
     return geodesic_sphere
@@ -137,35 +137,27 @@ def compute_for_open_curves(q1, q2, settings):
 
 
 def project_tangent(f,q):
-    return f - q * utils.inner_prod(f, q)
+    return f - q * utils.inner_prod(f.coords, q.coords)
 
 
 def compute_cov_derivative_path(alpha):
     n, T = np.shape(alpha[0])
     stp = len(alpha) - 1
     alpha_dt = []
+    alpha_dt.append(QShape(np.zeros((n, T))))
     for tau in xrange(1,len(alpha)):
         tmp = stp*(alpha[tau] - alpha[tau-1])
-        alpha_dt.append(project_tangent(tmp[:, :, tau], tmp[:, :, tau]))
+        alpha_dt.append(project_tangent(tmp, alpha[tau]))
     return alpha_dt
 
 
 def compute_for_open_curves(q1,q2,steps):
-    inner_product = utils.inner_prod(q1,q2)
-    th = np.acos(inner_product)
-    f = q2.coords - inner_product * q1.coords
-    f = th * f / np.sqrt(utils.inner_prod(f, f))
 
-    alpha = []
-    for tau in xrange(0,steps+1):
-        cs = compute_on_sphere(q1, f, float(tau)/steps)
-        for q in cs:
-            q.project_b
-        alpha.append(cs)
+    alpha = compute_on_sphere(q1, q2, steps)
     alpha_t = compute_cov_derivative_path(alpha)
-    alpha_pip = compute_Palais_inner_prod(alpha_t ,alpha_t)
+    alpha_pip = compute_Palais_inner_prod(alpha_t, alpha_t)
     alpha_path_len = compute_path_length(alpha_t)
-    return alpha,alpha_t,alpha_pip,alpha_path_len
+    return alpha, alpha_t, alpha_pip, alpha_path_len
 
 
 def compute_for_open_curves_elastic(q1, q2, settings):
@@ -175,23 +167,11 @@ def compute_for_open_curves_elastic(q1, q2, settings):
     geodesic.path = alpha
     geodesic.tangent_vect = alpha_t
     geodesic.geodesic_distance = alpha_path_len
+    return geodesic
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def to_curve_path(shape_path):
+    curve_path = []
+    for i in xrange(0, len(shape_path)):
+        curve_path.append(shape_path[i].to_curve())
+    return curve_path
