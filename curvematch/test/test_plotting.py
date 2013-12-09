@@ -18,12 +18,12 @@ curve1 = 'curvematch/test/data/curve1.ucf'
 def test_plotcurve_with_name():
     coords,atts,ismultiUCF = curveio.readcurve(curve1)
     q1 = QShape(coords)
-    plotting.plotcurve(q1, filename='plot_test')
+    plotting.plot_curve(q1, filename='plot_test')
     pass
 
 
 def test_plotcurve_without_name():
     coords,atts,ismultiUCF = curveio.readcurve(curve1)
     q1 = QShape(coords)
-    plotting.plotcurve(q1)
+    plotting.plot_curve(q1)
     pass
