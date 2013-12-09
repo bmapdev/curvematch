@@ -12,8 +12,9 @@ from math import pi
 from numpy import linalg as LA
 
 
-def inner_prod(q1, q2):
-    value = np.trapz(sum(q1.coords*q2.coords), np.linspace(0, 2*pi, q1.siz))
+def inner_prod(coords1, coords2):
+    # Assume coords1 and coords2 are numpy arrays
+    value = np.trapz(sum(coords1*coords2), np.linspace(0, 2*pi, coords1.shape[1]))
     return value
 
 
