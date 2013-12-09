@@ -10,21 +10,19 @@ from curvematch.settings import Settings
 from shapeio import curveio
 from curvematch.qshape import QShape
 import geodesics
+from curve import Curve
 
 
 def match_curve_pair(curvefilename1, curvefilename2, settings):
 
-    X1, attributes, isMultilevelUCF = curveio.readcurve(curvefilename1)
-    X2, attributes, isMultilevelUCF = curveio.readcurve(curvefilename2)
-
-    q1 = QShape(X1)
-    q2 = QShape(X2)
-
-    geodesic = geodesics.Geodesic()
+    q1 = QShape()
+    q1.from_curve_file(curvefilename1)
+    q2 = QShape()
+    q2.from_curve_file(curvefilename2)
 
     if settings.closed:
-        geodesics.compute_for_closed_curves(q1, q2, settings)
+        geodesic = geodesics.compute_for_closed_curves(q1, q2, settings)
     else:
         geodesic = geodesics.compute_for_open_curves_elastic(q1, q2, settings)
 
-    return geodesics
+    return geodesic
