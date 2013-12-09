@@ -16,17 +16,32 @@ from shapeio import curveio
 
 class Curve():
 
-    def __init__(self, coords=np.array([]), attributes=[], dim=0, siz=0):
-        self.coords = np.transpose(coords)
-        self.attributes = attributes
-        self.dim = dim
-        self.siz = siz
+    def __init__(self, coords=np.array([]), attributes=[], dim=0, siz=0, file=None):
+        if file is not None:
+            self.readcurve(file)
+            return
+        if coords.size != 0:
+            n, T = coords.shape
+            if n > T:
+                self.coords = np.transpose(coords)
+            else:
+                self.coords = coords
+            self.dim, self.siz = self.coords.shape
+        else:
+            self.dim = 0
+            self.siz = 0
         self.shape = (self.dim, self.siz)
 
-        if coords is not None:
-            self.dim = self.coords.shape[0]
-            self.siz = self.coords.shape[1]
-            self.shape = (self.dim, self.siz)
+        # self.coords = np.transpose(coords)
+        # self.attributes = attributes
+        # self.dim = dim
+        # self.siz = siz
+        # self.shape = (self.dim, self.siz)
+        #
+        # if coords.size != 0:
+        #     self.dim = self.coords.shape[0]
+        #     self.siz = self.coords.shape[1]
+        #     self.shape = (self.dim, self.siz)
 
     def winding_number(self):
         pass
