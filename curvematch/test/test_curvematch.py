@@ -11,6 +11,9 @@ from curvematch.settings import Settings
 # from shapeio import curveio
 # from curvematch.qshape import QShape
 from curvematch import match
+from curvematch import plotting
+from curvematch import geodesics
+
 
 Settings.output_dir = 'curvematch/test/data'
 curve1 = 'curvematch/test/data/curve1.ucf'
@@ -20,6 +23,7 @@ settings.closed = False
 
 def test_curvematch():
     geodesic = match.match_curve_pair(curve1, curve2, settings)
-
+    curve_path = geodesics.to_curve_path(geodesic.path)
+    plotting.plot_path(curve_path)
 
 test_curvematch()
