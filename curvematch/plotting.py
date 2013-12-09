@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from os import path
 
 
-def plotcurve(q1, interactive=False, filename=None):
+def plot_curve(q1, interactive=False, filename=None):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
 
@@ -34,8 +34,9 @@ def plotcurve(q1, interactive=False, filename=None):
         plt.savefig(path.join(Settings.output_dir, filename))
 
 
-def path_plot():
-    pass
+def plot_path(curve_path):
+    for i in xrange(0, len(curve_path)):
+        plot_curve(curve_path[i], interactive=False, filename = 'curve_plot' + str(i))
 
 
 def plot_deformationfield():
