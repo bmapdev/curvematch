@@ -8,12 +8,9 @@ __copyright__ = "Copyright 2013, Shantanu H. Joshi, Brandon Ayers, \
 __email__ = "s.joshi@ucla.edu"
 
 from math import pi
-
 import numpy as np
-import scipy
 from scipy import linalg as LA
 from scipy import integrate
-
 import curve
 import utils
 
@@ -177,11 +174,9 @@ class QShape():
         gamma_t = np.gradient(gamma, 2*pi/(self.siz-1))
         q_composed_gamma = np.zeros(self.shape)
         for i in xrange(self.dim):
-            q_composed_gamma[i, :] = np.interp(np.linspace(0, 2*pi, self.siz),
-                                               self.coords[i, :], gamma)  # Can not specify "nearest" method
+            q_composed_gamma[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])  # Can not specify "nearest" method
         sqrt_gamma_t = np.tile(np.sqrt(gamma_t), (self.dim, 1))  # Possible error?
-        qn = q_composed_gamma * sqrt_gamma_t
-        return qn
+        return QShape(q_composed_gamma * sqrt_gamma_t)
 
     def estimate_gamma(self):
         p = self.to_curve()
