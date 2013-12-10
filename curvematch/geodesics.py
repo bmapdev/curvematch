@@ -8,7 +8,7 @@ __email__ = "s.joshi@ucla.edu"
 
 
 import numpy as np
-
+from math import pi
 import utils
 from curvematch.settings import Settings
 from curvematch.DPmatch import DPmatchcy
@@ -163,7 +163,10 @@ def compute_for_open_curves(q1,q2,steps):
 def compute_for_open_curves_elastic(q1, q2, settings):
 
     geodesic = Geodesic()
-    alpha, alpha_t, alpha_pip, alpha_path_len = compute_for_open_curves(q1, q2, settings.steps)
+    gamma = DPmatchcy.match(q1.coords, q2.coords)
+    gamma = gamma*2*pi
+    q2n = q2.group_action_by_gamma(gamma)
+    alpha, alpha_t, alpha_pip, alpha_path_len = compute_for_open_curves(q1, q2n, settings.steps)
     geodesic.path = alpha
     geodesic.tangent_vect = alpha_t
     geodesic.geodesic_distance = alpha_path_len
