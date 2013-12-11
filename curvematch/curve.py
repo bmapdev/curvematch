@@ -10,7 +10,6 @@ __email__ = "s.joshi@ucla.edu"
 
 import numpy as np
 from numpy import linalg as LA
-
 from shapeio import curveio
 
 
@@ -19,7 +18,8 @@ class Curve():
     def __init__(self, coords=np.array([]), attributes=[], dim=0, siz=0, file=None):
         if file is not None:
             self.readcurve(file)
-            return
+            coords = self.coords
+
         if coords.size != 0:
             n, T = coords.shape
             if n > T:
@@ -80,38 +80,45 @@ class Curve():
         pass
 
     def remove_duplicate_vertices(self):
-        epsilon = 1/20*1/self.siz
-        curve_gradient = np.diff(self.coords)
-        duplicate_status = curve_gradient > epsilon
-        bitwise_or_flag = np.array(self.siz*[True], bool)
-        # Logical OR all the components. Where False, the index is duplicate
-        if self.dim == 2:
-            bitwise_or_flag = np.logical_or(duplicate_status[0, :], duplicate_status[1, :])
-        elif self.dim == 3:
-            bitwise_or_flag = np.logical_or(duplicate_status[0, :], duplicate_status[1, :])
-            bitwise_or_flag = np.logical_or(bitwise_or_flag, duplicate_status[2, :])
-        self.coords = self.coords[:, bitwise_or_flag]
+        epsilon = 1/20.0*1.0/self.siz
+        curve_gradient = np.zeros((self.dim, self.siz))
+        for i in xrange(self.dim):
+            curve_gradient[i, :] = np.gradient(self.coords[i, :])
+
+        arc_length = np.zeros(self.siz)
+        for i in range(0, self.siz):
+            arc_length[i] = LA.norm(curve_gradient[:, i])
+
+        duplicate_status = arc_length > epsilon  # Where False, the index is duplicate
+        self.coords = self.coords[:, duplicate_status]
+        self.siz = self.coords.shape[1]
+        self.shape = self.coords.shape
 
     def remove_traceover_defects(self):
         pass
 
-    def resample_curve_uniform(self):
-        self.remove_duplicate_vertices()
-        #curve_gradient = empty((self.dim, self.siz))
-        arc_length = np.empty((self.dim, self.siz))
+    def resample_curve_uniform(self, newsiz=None):
+        if newsiz is None:
+            newsiz = self.siz
 
-        curve_gradient = np.diff(self.coords)
-        #for i in range(0, self.dim):
-        #    curve_gradient[i, :] = diff(self.coords[i, :])
+        self.remove_duplicate_vertices()
+        curve_gradient = np.zeros((self.dim, self.siz))
+        arc_length = np.zeros(self.siz)
+
+        for i in xrange(self.dim):
+            curve_gradient[i, :] = np.gradient(self.coords[i, :])
+
         for i in range(0, self.siz):
-            arc_length[:, i] = LA.norm(curve_gradient[:, i])
+            arc_length[i] = LA.norm(curve_gradient[:, i])
 
         cumulative_arc_length = np.cumsum(arc_length)
-
+        newcoords = np.zeros((self.dim, newsiz))
         for i in range(0, self.dim):
-            self.coords[i, :] = np.interp(cumulative_arc_length[i, :], curve_gradient,
-                                          np.linspace(cumulative_arc_length[0],
-                                                      cumulative_arc_length[-1], self.siz))
+            newcoords[i, :] = np.interp(np.transpose(np.linspace(cumulative_arc_length[0],
+                                                      cumulative_arc_length[-1], newsiz)),
+                                                      cumulative_arc_length, self.coords[i, :])
+        self.coords = newcoords
+        self.siz = newsiz
 
     def readcurve(self,filename):
         self.coords, self.attributes, ismultiUCF = curveio.readcurve(filename)
