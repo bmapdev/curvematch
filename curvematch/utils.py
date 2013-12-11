@@ -35,17 +35,19 @@ def shift_vertices(p, tau):
     return pn
 
 
-def Find_Best_Rotation(q1, q2):
+def find_best_rotation(q1, q2):
     #assumes starting points are fixed
-    A = q1*q2.transpose()
+    A = np.dot(q1.coords, q2.coords.transpose())
+    # A = q1.coords*q2.coords.transpose()
     U, S, V = LA.svd(A)
-    if np.absolute(np.det(U*np.det(V) -1)) < 10*np.spacing(1) :
+    if np.absolute(LA.det(U)*LA.det(V) -1) < 10*np.spacing(1):
         S = np.eye(q1.dim)
     else:
         S = np.eye(q1.dim)
         S[:, -1] = -S[:, -1]
-    R = U*S*V
-    q2new = R*q2
-    return q2new
+    R = np.dot(np.dot(U, S), np.transpose(V))  # R=U*S*V' (matrix multiplication)
+    q2new = q2.copy()
+    q2new.coords = np.dot(R, q2.coords)
+    return q2new, R
 
 
