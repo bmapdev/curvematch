@@ -13,7 +13,7 @@ from scipy import linalg as LA
 from scipy import integrate
 import curve
 import utils
-
+import copy
 
 class QShape():
 
@@ -31,6 +31,7 @@ class QShape():
             self.siz = 0
         self.shape = (self.dim, self.siz)
 
+
     def __add__(self, q):
         return QShape(self.coords + q.coords)
 
@@ -45,6 +46,9 @@ class QShape():
 
     def __div__(self, x):
         return QShape(self.coords / x)
+
+    def copy(self):
+        return QShape(copy.copy(self.coords))
 
     def from_curve_file(self, filename):
         curve1 = curve.Curve()
@@ -90,10 +94,9 @@ class QShape():
         return p
 
     def project_b(self):
-        self.coords = self.coords/np.sqrt(utils.inner_prod(self.coords, self.coords))
+        self.coords = self.coords/(np.sqrt(utils.inner_prod(self.coords, self.coords)) + np.spacing(1))
         #qnew = q/np.sqrt(utils.inner_prod(q,q))
         #return qnew
-
 
     def project_c(self, q):
         shape_q = np.shape(q)
@@ -171,7 +174,7 @@ class QShape():
 
     def group_action_by_gamma(self, gamma):
         #gamma_orig = Estimate_Gamma(q)
-        gamma_t = np.gradient(gamma, 2*pi/(self.siz-1))
+        gamma_t = np.gradient(gamma, 2*pi/self.siz)
         q_composed_gamma = np.zeros(self.shape)
         for i in xrange(self.dim):
             q_composed_gamma[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])  # Can not specify "nearest" method
