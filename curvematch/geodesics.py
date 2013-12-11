@@ -94,6 +94,7 @@ def compute_path_length(path_dt):
 
     return np.trapz(sqrt_inner_prod_val, np.linspace(0, 1, steps))
 
+
 def compute_ambient(q1, q2, stp):
     geodesic_path = np.zeros((q1.dim, q1.siz, stp))
     for tau in range(0, stp):
@@ -128,14 +129,6 @@ def compute_for_closed_curves(q1, q2, settings):
     return
 
 
-def compute_for_open_curves(q1, q2, settings):
-
-    gamma = DPmatchcy.match(q1.coords, q2.coords)
-    #q2n = GroupactionGamma(q2,gamma)
-
-    return
-
-
 def project_tangent(f,q):
     return f - q * utils.inner_prod(f.coords, q.coords)
 
@@ -160,16 +153,20 @@ def compute_for_open_curves(q1,q2,steps):
     return alpha, alpha_t, alpha_pip, alpha_path_len
 
 
-def compute_for_open_curves_elastic(q1, q2, settings):
+def compute_for_open_curves_elastic(q1, q2, settings, rotation=False):
 
-    geodesic = Geodesic()
+    if rotation:
+        q2, R = utils.find_best_rotation(q1, q2)
+
     gamma = DPmatchcy.match(q1.coords, q2.coords)
     gamma = gamma*2*pi
     q2n = q2.group_action_by_gamma(gamma)
     alpha, alpha_t, alpha_pip, alpha_path_len = compute_for_open_curves(q1, q2n, settings.steps)
+    geodesic = Geodesic()
     geodesic.path = alpha
     geodesic.tangent_vect = alpha_t
     geodesic.geodesic_distance = alpha_path_len
+    geodesic.gamma = gamma
     return geodesic
 
 
