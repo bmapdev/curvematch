@@ -17,8 +17,8 @@ import time
 from sys import stdout
 
 Settings.output_dir = 'curvematch/test/data'
-curve1 = 'curvematch/test/data/04_Curve16.ucf'
-curve2 = 'curvematch/test/data/05_Curve16.ucf'
+curve1 = 'curvematch/test/data/sulcus1.ucf'
+curve2 = 'curvematch/test/data/sulcus2.ucf'
 # curve1 = 'curvematch/test/data/curve1.ucf'
 # curve2 = 'curvematch/test/data/curve2.ucf'
 
