@@ -17,15 +17,19 @@ import time
 from sys import stdout
 
 Settings.output_dir = 'curvematch/test/data'
-curve1 = 'curvematch/test/data/curve1.ucf'
-curve2 = 'curvematch/test/data/curve2.ucf'
+curve1 = 'curvematch/test/data/04_Curve16.ucf'
+curve2 = 'curvematch/test/data/05_Curve16.ucf'
+# curve1 = 'curvematch/test/data/curve1.ucf'
+# curve2 = 'curvematch/test/data/curve2.ucf'
+
 settings = Settings()
 settings.closed = False
 
 
 def test_curvematch():
     t = time.time()
-    geodesic = match.match_curve_pair(curve1, curve2, settings)
+    geodesic = match.match_curve_pair(curve1, curve2, settings, rotation=False)
+    print geodesic.geodesic_distance
     curve_path = geodesics.to_curve_path(geodesic.path)
     plotting.plot_path(curve_path, 'elastic_path')
     elapsed = time.time() - t
