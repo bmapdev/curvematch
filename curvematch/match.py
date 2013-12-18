@@ -13,7 +13,7 @@ import geodesics
 from curve import Curve
 
 
-def match_curve_pair(curvefilename1, curvefilename2, settings, rotation=False, siz=100):
+def match_curve_pair(curvefilename1, curvefilename2, settings, rotation=False, siz=100, return_curves=False):
 
     c1 = Curve(file=curvefilename1)
     c2 = Curve(file=curvefilename2)
@@ -30,4 +30,7 @@ def match_curve_pair(curvefilename1, curvefilename2, settings, rotation=False, s
     else:
         geodesic = geodesics.compute_for_open_curves_elastic(q1, q2, settings, rotation)
 
-    return geodesic
+    if return_curves:
+        return geodesic, c1, c2
+    else:
+        return geodesic
