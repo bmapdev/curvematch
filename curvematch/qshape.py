@@ -98,64 +98,62 @@ class QShape():
         #qnew = q/np.sqrt(utils.inner_prod(q,q))
         #return qnew
 
-    def project_c(self, q):
-        shape_q = np.shape(q)
-        n = shape_q[0]
-        T = shape_q[1]
+    def project_to_space_closed_curves(self):
         dt = 0.3
-        epsilon = (1.0/60.0) * 2.0 * (pi / T )
+        epsilon = (1.0/60.0) * (2.0*pi / self.siz)
 
         itr = 0
-        res = np.ones((1,n))
-        J = np.zeros( (n,n) )
-        s = np.linspace(0,2*pi,T)
+        res = np.ones((1, self.dim))
+        J = np.zeros((self.dim, self.dim))
 
-        qnew = q / np.sqrt(utils.inner_prod(q.coords, q.coords))
-        C = {}
-        while LA.norm(res) > epsilon:
+        s = np.linspace(0, 2*pi, self.siz)
+
+        qnew = QShape()
+        qnew.coords = self.coords/(np.sqrt(utils.inner_prod(self.coords, self.coords)) + np.spacing(1))
+        C = []
+        while LA.norm(res, ord=2) > epsilon:
             if itr > 300:
                 print "Warning: Shape failed to project.  Geodesics will be incorrect."
-                break
+                self = qnew
+                return  #(qnew)
 
             # Compute Jacobian
-            for i in xrange(n):
-                for j in xrange(n):
-                    J[i,j] = 3 * np.trapz( qnew[i,:] * qnew[j,:] , s)
-            J += np.eye(n)
+            for i in xrange(self.dim):
+                    for j in xrange(self.dim):
+                        J[i, j] = 3 * np.trapz(qnew.coords[i, :] * qnew.coords[j, :], s)
+            J += np.eye(self.dim)
 
-            qnorm = np.zeros(T)
-            for i in xrange(T):
-                qnorm[i] = LA.norm(qnew[:,i])
-                ##################################################
+            qnorm = np.zeros(self.siz)
+            for i in xrange(self.siz):
+                qnorm[i] = LA.norm(qnew.coords[:, i], ord=2)
+            ##################################################
             # Compute the residue
-            G = np.zeros(n)
-            for i in xrange(n):
-                G[i] = np.trapz( (qnew[i,:] * qnorm) , s)
+            G = np.zeros(self.dim)
+            for i in xrange(self.dim):
+                G[i] = np.trapz((qnew.coords[i, :] * qnorm), s)
             res = -G
-            C[itr] = LA.norm(res)
+
+            if LA.norm(res, ord=2) < epsilon:
+                self = qnew
+                return  # qnew
+
+            C[itr] = LA.norm(res, ord=2)
             cond_J = LA.cond(J)
-            if LA.norm(res) < epsilon:
-                qnew = qnew/np.sqrt(utils.inner_prod(qnew.coords, qnew.coords))
-                return(qnew)
 
-            if  np.isnan(cond_J) or np.isinf(cond_J) or (cond_J < 0.1):
+            if np.isnan(cond_J) or np.isinf(cond_J) or (cond_J < 0.1):
                 print '\nProjection may not be accurate\n'
-                qnew = q
-                qnew = qnew/np.sqrt(utils.inner_prod(qnew.coords, qnew.coords))
-                return(qnew)
+                #qnew = q
+                #qnew = q / np.sqrt(InnerProd_Q(q, q))
+                self.coords = self.coords/(np.sqrt(utils.inner_prod(self.coords, self.coords)) + np.spacing(1))
+                return #qnew
             else:
-                x = LA.solve(J ,res.T)
-                delG = self.form_basis_normal_a(qnew)
+                x = LA.solve(J, res.T)
+                delG = Form_Basis_Normal_A(qnew)
                 temp = 0
-                for i in xrange(n):
+                for i in xrange(q.dim):
                     temp = temp + x[i] * delG[i] * dt
-                qnew += temp
-
+                qnew.coords += temp
                 itr += 1  #Iterator for while loop
-        qnew = qnew/np.sqrt(utils.inner_prod(qnew.coords, qnew.coords))
-        print("What?")
-
-        return(qnew)
 
     def form_basis_normal_a(self):
         e = np.eye(self.dim)
