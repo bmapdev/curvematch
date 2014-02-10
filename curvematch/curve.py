@@ -30,7 +30,9 @@ class Curve():
         else:
             self.dim = 0
             self.siz = 0
-        self.shape = (self.dim, self.siz)
+
+    def shape(self):
+        return self.coords.shape()
 
         # self.coords = np.transpose(coords)
         # self.attributes = attributes
