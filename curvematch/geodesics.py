@@ -143,6 +143,15 @@ def compute_cov_derivative_path(alpha):
         alpha_dt.append(project_tangent(tmp, alpha[tau]))
     return alpha_dt
 
+def compute_for_closed_curves_approx(q1, q2, steps):
+    alpha = compute_on_sphere(q1, q2, steps)
+    for shape in alpha:
+        shape.project_to_space_open_curves()
+    alpha_t = compute_cov_derivative_path(alpha)
+    alpha_pip = compute_Palais_inner_prod(alpha_t, alpha_t)
+    alpha_path_len = compute_path_length(alpha_t)
+    return alpha, alpha_t, alpha_pip, alpha_path_len
+
 
 def compute_for_open_curves(q1,q2,steps):
 
