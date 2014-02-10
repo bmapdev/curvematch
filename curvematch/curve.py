@@ -124,3 +124,16 @@ class Curve():
         self.coords, self.attributes, ismultiUCF = curveio.readcurve(filename)
         self.dim, self.siz = self.coords.shape
 
+    def append_curve(self, other_curve):
+        if self.dim != other_curve.dim:
+            raise ValueError("Cannot connect curves with mismatched dimensions!")
+        for col in other_curve.coords.T:
+            if col not in self.coords:
+                self.coords = np.append(self.coords, col)
+                self.siz += 1
+                
+
+
+
+
+
