@@ -26,11 +26,16 @@ class Curve():
                 self.coords = np.transpose(coords)
             else:
                 self.coords = coords
-            self.dim, self.siz = self.coords.shape
         else:
             self.coords = np.array([])
-            self.dim = 0
-            self.siz = 0
+
+    def dim(self):
+        return self.coords.shape[0]
+    def siz(self):
+        if self.dim() == 0:
+            return 0
+        else:
+            return self.coords.shape[1]
 
     def shape(self):
         if len(self.coords.shape) > 1:
