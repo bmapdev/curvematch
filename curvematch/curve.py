@@ -28,9 +28,15 @@ class Curve():
                 self.coords = coords
             self.dim, self.siz = self.coords.shape
         else:
+            self.coords = np.array([])
             self.dim = 0
             self.siz = 0
-        self.shape = (self.dim, self.siz)
+
+    def shape(self):
+        if len(self.coords.shape) > 1:
+            return self.coords.shape
+        else:
+            return 0, 0
 
         # self.coords = np.transpose(coords)
         # self.attributes = attributes
@@ -123,4 +129,17 @@ class Curve():
     def readcurve(self,filename):
         self.coords, self.attributes, ismultiUCF = curveio.readcurve(filename)
         self.dim, self.siz = self.coords.shape
+
+    def append_curve(self, other_curve):
+        if self.dim != other_curve.dim:
+            raise ValueError("Cannot connect curves with mismatched dimensions!")
+        for col in other_curve.coords.T:
+            if col not in self.coords:
+                self.coords = np.append(self.coords, col)
+                self.siz += 1
+                
+
+
+
+
 
