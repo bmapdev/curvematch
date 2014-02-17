@@ -11,7 +11,7 @@ __email__ = "s.joshi@ucla.edu"
 import numpy as np
 from numpy import linalg as LA
 from shapeio import curveio
-
+from math import pi
 
 class Curve():
 
@@ -137,9 +137,13 @@ class Curve():
             if col not in self.coords:
                 self.coords = np.append(self.coords, col)
                 self.siz += 1
-                
 
+    def reparameterize_by_gamma(self, gamma):
+        for i in range(0, self.dim):
+            self.coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])
 
-
-
-
+    def return_reparameterized_by_gamma(self, gamma):
+        coords = self.coords.copy()
+        for i in range(0, self.dim):
+            coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])
+        return Curve(coords)
