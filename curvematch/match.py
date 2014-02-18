@@ -126,23 +126,23 @@ def group_matching_batch(top_curves_file, bot_curves_file):
     settings = geodesics.Geodesic()
     settings.steps = 5
     settings.closed = True
+
     i = 1
-    uniform = []
-
-
     matched_curves = get_group_matching(template, curves_list[1:], match=False)
     for curve in matched_curves:
-        plot_matching("subject_uniform"+str(i),template, curve)
+        plot_matching("subject_uniform"+str(i), template, curve)
         i += 1
+
     matched_curves = get_group_matching(template, curves_list[1:], match=True)
     i = 1
     for curve in matched_curves:
-        plot_matching("subject_closed"+str(i),template, curve)
+        plot_matching("subject_closed"+str(i), template, curve)
         i += 1
     settings.closed = False
+
     i = 1
     for curve in matched_curves:
-        plot_matching("subject_open"+str(i),template, curve)
+        plot_matching("subject_open"+str(i), template, curve)
         i += 1
 
 
@@ -152,7 +152,7 @@ def plot_matching(plot_title, curve1, curve2, lines=20, offset=5):
     shift_x = np.min(curve1.coords[0, :]) - np.min(curve2.coords[0, :])
     shift_y = np.max(curve1.coords[1, :]) - np.max(curve2.coords[1, :])
 
-    curve2.coords[0] -= shift_x
+    curve2.coords[0] += shift_x
     curve2.coords[1] += shift_y
     shift_y_down = max(curve2.coords[0]) - min(curve1.coords[1]) + offset
     curve2.coords[1] -= shift_y_down
