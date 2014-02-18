@@ -134,12 +134,7 @@ class Curve():
     def append_curve(self, other_curve, reverse=True):
         if self.dim() != other_curve.dim():
             raise ValueError("Cannot connect curves with mismatched dimensions!")
-<<<<<<< HEAD
-        #for col in other_curve.coords.T:
-         #   if col not in self.coords.T:
-          #     self.coords = np.concatenate((self.coords.T, col)).T
-           #     print col.T , '\n'
-            #print "Dupe"
+
         if reverse:
             other_coords = np.fliplr(other_curve.coords)
         else:
@@ -151,25 +146,6 @@ class Curve():
             else:
                 print self.coords.shape, col.shape
 
-
-
-
-
-
-
-
-
-                
-
-
-
-=======
-        for col in other_curve.coords.T:
-            if col not in self.coords:
-                self.coords = np.append(self.coords, col)
-                self.siz += 1
->>>>>>> 5b76a3c3936fe83a0d45a15ca43fe0228d02fca8
-
     def reparameterize_by_gamma(self, gamma):
         for i in range(0, self.dim):
             self.coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])
@@ -179,3 +155,5 @@ class Curve():
         for i in range(0, self.dim):
             coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])
         return Curve(coords)
+    
+
