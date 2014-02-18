@@ -83,6 +83,8 @@ def get_group_matching(template_curve, match_curves, settings=False, resample_si
         current_curve.resample_curve_uniform(resample_size)
         if match:
             matched_curves_list.append(elastic_curve_matching(template_curve, current_curve, settings, rotation))
+        else:
+            matched_curves_list.append(current_curve)
     return matched_curves_list
 
 
@@ -166,7 +168,7 @@ def plot_matching(plot_title, curve1, curve2, lines=20, offset=5):
     for i in xrange(0, curve1.siz(), line_step):
         plt.plot([curve1.coords[0][i], curve2.coords[0][i]],
                 [curve1.coords[1][i], curve2.coords[1][i]])
-    plt.savefig(plot_title+'.pdf') ##Just showing for testing purposes
+    plt.savefig(plot_title + '.pdf') ##Just showing for testing purposes
     plt.close('all')
 
 
