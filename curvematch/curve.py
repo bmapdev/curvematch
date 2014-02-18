@@ -11,7 +11,7 @@ __email__ = "s.joshi@ucla.edu"
 import numpy as np
 from numpy import linalg as LA
 from shapeio import curveio
-
+from math import pi
 
 class Curve():
 
@@ -134,6 +134,7 @@ class Curve():
     def append_curve(self, other_curve, reverse=True):
         if self.dim() != other_curve.dim():
             raise ValueError("Cannot connect curves with mismatched dimensions!")
+<<<<<<< HEAD
         #for col in other_curve.coords.T:
          #   if col not in self.coords.T:
           #     self.coords = np.concatenate((self.coords.T, col)).T
@@ -162,5 +163,19 @@ class Curve():
 
 
 
+=======
+        for col in other_curve.coords.T:
+            if col not in self.coords:
+                self.coords = np.append(self.coords, col)
+                self.siz += 1
+>>>>>>> 5b76a3c3936fe83a0d45a15ca43fe0228d02fca8
 
+    def reparameterize_by_gamma(self, gamma):
+        for i in range(0, self.dim):
+            self.coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])
 
+    def return_reparameterized_by_gamma(self, gamma):
+        coords = self.coords.copy()
+        for i in range(0, self.dim):
+            coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])
+        return Curve(coords)
