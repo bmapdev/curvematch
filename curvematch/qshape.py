@@ -9,7 +9,7 @@ __email__ = "s.joshi@ucla.edu"
 
 from math import pi
 import numpy as np
-from scipy import linalg as LA
+from numpy import linalg as LA
 from scipy import integrate
 import curve
 import utils
@@ -20,16 +20,25 @@ class QShape():
     def __init__(self, coords=np.array([])):
 
         if coords.size != 0:
-            n, T = coords.shape
-            if n > T:
+            if coords.shape[0] > coords.shape[1]:
                 self.coords = np.transpose(coords)
             else:
                 self.coords = coords
-            self.dim, self.siz = self.coords.shape
+
+    def dim(self):
+        return self.coords.shape[0]
+
+    def siz(self):
+        if len(self.coords.shape) < 2:
+            return 0
         else:
-            self.dim = 0
-            self.siz = 0
-        self.shape = (self.dim, self.siz)
+            return self.coords.shape[1]
+
+    def shape(self):
+        if len(self.coords.shape) > 1:
+            return self.coords.shape
+        else:
+            return 0, 0
 
 
     def __add__(self, q):
@@ -58,7 +67,7 @@ class QShape():
 
     def from_curve(self, curve):
 
-        dim, siz = curve.dim, curve.siz
+        dim, siz = curve.dim(), curve.siz()
         if dim > siz:
             coords = np.transpose(curve.coords)
             dim, siz = coords.shape
@@ -76,19 +85,16 @@ class QShape():
             coords[:, i] = v[:, i] / np.sqrt(LA.norm(v[:, i]))
 
         self.coords = coords
-        self.dim = dim
-        self.siz = siz
-        self.shape = (self.dim, self.siz)
         self.project_b()
         #self.ProjectC(q)
 
     def to_curve(self):  # Return a curve object? Should we import curve?
-        s = np.linspace(0, 2*pi, self.siz)
-        qnorm = np.zeros(self.siz)
-        for i in xrange(self.siz):
+        s = np.linspace(0, 2*pi, self.siz())
+        qnorm = np.zeros(self.siz())
+        for i in xrange(self.siz()):
             qnorm[i] = LA.norm(self.coords[:,i],2)
-        p = curve.Curve(np.zeros(self.shape),[],self.dim,self.siz)
-        for i in xrange(self.dim):
+        p = curve.Curve(np.zeros(self.shape()),[],self.dim(),self.siz())
+        for i in xrange(self.dim()):
             temp = self.coords[i, :] * qnorm
             p.coords[i, :] = integrate.cumtrapz(temp, s, initial=0)
         return p
@@ -100,13 +106,13 @@ class QShape():
 
     def project_to_space_closed_curves(self):
         dt = 0.3
-        epsilon = (1.0/60.0) * (2.0*pi / self.siz)
+        epsilon = (1.0/60.0) * (2.0*pi / self.siz())
 
         itr = 0
-        res = np.ones((1, self.dim))
-        J = np.zeros((self.dim, self.dim))
+        res = np.ones((1, self.dim()))
+        J = np.zeros((self.dim(), self.dim()))
 
-        s = np.linspace(0, 2*pi, self.siz)
+        s = np.linspace(0, 2*pi, self.siz())
 
         qnew = QShape()
         qnew.coords = self.coords/(np.sqrt(utils.inner_prod(self.coords, self.coords)) + np.spacing(1))
@@ -118,18 +124,18 @@ class QShape():
                 return  #(qnew)
 
             # Compute Jacobian
-            for i in xrange(self.dim):
-                    for j in xrange(self.dim):
+            for i in xrange(self.dim()):
+                    for j in xrange(self.dim()):
                         J[i, j] = 3 * np.trapz(qnew.coords[i, :] * qnew.coords[j, :], s)
-            J += np.eye(self.dim)
+            J += np.eye(self.dim())
 
-            qnorm = np.zeros(self.siz)
-            for i in xrange(self.siz):
+            qnorm = np.zeros(self.siz())
+            for i in xrange(self.siz()):
                 qnorm[i] = LA.norm(qnew.coords[:, i], ord=2)
             ##################################################
             # Compute the residue
-            G = np.zeros(self.dim)
-            for i in xrange(self.dim):
+            G = np.zeros(self.dim())
+            for i in xrange(self.dim()):
                 G[i] = np.trapz((qnew.coords[i, :] * qnorm), s)
             res = -G
 
@@ -137,7 +143,7 @@ class QShape():
                 self = qnew
                 return  # qnew
 
-            C[itr] = LA.norm(res, ord=2)
+            #C.append( LA.norm(res, ord=2))
             cond_J = LA.cond(J)
 
             if np.isnan(cond_J) or np.isinf(cond_J) or (cond_J < 0.1):
@@ -148,35 +154,35 @@ class QShape():
                 return #qnew
             else:
                 x = LA.solve(J, res.T)
-                delG = Form_Basis_Normal_A(qnew)
+                delG = self.form_basis_normal_a()
                 temp = 0
-                for i in xrange(q.dim):
+                for i in xrange(self.dim()):
                     temp = temp + x[i] * delG[i] * dt
                 qnew.coords += temp
                 itr += 1  #Iterator for while loop
 
     def form_basis_normal_a(self):
-        e = np.eye(self.dim)
+        e = np.eye(self.dim())
         ev = []
-        for i in xrange(self.dim):
-            ev.append( np.tile(e[:, i], (self.siz, 1)).transpose())
-            qnorm = np.zeros(self.siz)
-        for i in xrange(self.siz):
+        for i in xrange(self.dim()):
+            ev.append( np.tile(e[:, i], (self.siz(), 1)).transpose())
+            qnorm = np.zeros(self.siz())
+        for i in xrange(self.siz()):
             qnorm[i] = LA.norm(self.coords[:, i])
         del_g = {}
-        for i in xrange(self.dim):
-            tmp1 = np.tile((self.coords[i, :] / qnorm), (self.dim, 1))
-            tmp2 = np.tile(qnorm, (self.dim, 1))
+        for i in xrange(self.dim()):
+            tmp1 = np.tile((self.coords[i, :] / qnorm), (self.dim(), 1))
+            tmp2 = np.tile(qnorm, (self.dim(), 1))
             del_g[i] = tmp1*self.coords + tmp2*ev[i]
         return del_g
 
     def group_action_by_gamma(self, gamma):
         #gamma_orig = Estimate_Gamma(q)
-        gamma_t = np.gradient(gamma, 2*pi/self.siz)
-        q_composed_gamma = np.zeros(self.shape)
-        for i in xrange(self.dim):
-            q_composed_gamma[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])  # Can not specify "nearest" method
-        sqrt_gamma_t = np.tile(np.sqrt(gamma_t), (self.dim, 1))  # Possible error?
+        gamma_t = np.gradient(gamma, 2*pi/self.siz())
+        q_composed_gamma = np.zeros(self.shape())
+        for i in xrange(self.dim()):
+            q_composed_gamma[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz()), self.coords[i, :])  # Can not specify "nearest" method
+        sqrt_gamma_t = np.tile(np.sqrt(gamma_t), (self.dim(), 1))  # Possible error?
         return QShape(q_composed_gamma * sqrt_gamma_t)
 
     def estimate_gamma(self):
