@@ -122,11 +122,12 @@ def compute_on_sphere(q1, q2, steps):
 
 def compute_for_closed_curves(q1, q2, settings):
 
-
-    gamma = DPmatchcy.match(q1.coords, q2.coords)
-    #q2n = GroupactionGamma(q2,gamma)
-
-    return
+    alpha = compute_on_sphere(q1, q2, steps)
+    alpha = project_space_closed_curves(alpha)
+    alpha_t = compute_cov_derivative_path(alpha)
+    alpha_pip = compute_Palais_inner_prod(alpha_t, alpha_t)
+    alpha_path_len = compute_path_length(alpha_t)
+    return alpha, alpha_t, alpha_pip, alpha_path_len
 
 
 def project_tangent(f,q):
