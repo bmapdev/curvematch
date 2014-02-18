@@ -39,7 +39,7 @@ def compute_flow(q1, tangent_vect, step):
     if norm <= 0.001:
         return q1, tangent_vect
 
-    geodesic_path = np.zeros(q1.dim, q1.siz, step)
+    geodesic_path = np.zeros(q1.dim(), q1.siz(), step)
     qt = q1.copy()
     for i in range(1, step+1):
         qt = qt + norm/step
@@ -78,7 +78,7 @@ def compute_path_derivative(geodesic_path):
 # TODO uncomment the project to tangent
     q = geodesic_path[:, :, 0]
     step = geodesic_path.shape[2]
-    path_derivative = np.zeros((q.dim, q.siz, step))
+    path_derivative = np.zeros((q.dim(), q.siz(), step))
 
     for tau in range(2, step+1):
         path_derivative[:, :, tau] = step*(geodesic_path[:, :, tau] - geodesic_path[:, :, tau-1])
@@ -96,7 +96,7 @@ def compute_path_length(path_dt):
 
 
 def compute_ambient(q1, q2, stp):
-    geodesic_path = np.zeros((q1.dim, q1.siz, stp))
+    geodesic_path = np.zeros((q1.dim(), q1.siz(), stp))
     for tau in range(0, stp):
         geodesic_path[:, :, tau] = (1-tau*1.0/stp)*q1.coords + tau*1.0/stp*q2.coords
 
@@ -116,7 +116,7 @@ def compute_on_sphere(q1, q2, steps):
         qt = np.cos(dt*vnorm)*q1 + np.sin(dt*vnorm)*f/vnorm
         qt.project_b()
         geodesic_sphere.append(qt)
-
+    #print geodesic_sphere
     return geodesic_sphere
 
 
@@ -134,7 +134,7 @@ def project_tangent(f,q):
 
 
 def compute_cov_derivative_path(alpha):
-    n, T = np.shape(alpha[0])
+    n, T = np.shape(alpha[0].coords)
     stp = len(alpha) - 1
     alpha_dt = []
     alpha_dt.append(QShape(np.zeros((n, T))))
@@ -143,17 +143,17 @@ def compute_cov_derivative_path(alpha):
         alpha_dt.append(project_tangent(tmp, alpha[tau]))
     return alpha_dt
 
-def compute_for_closed_curves_approx(q1, q2, steps):
-    alpha = compute_on_sphere(q1, q2, steps)
+def compute_for_closed_curves_approx(q1, q2, settings):
+    alpha = compute_on_sphere(q1, q2, settings.steps)
     for shape in alpha:
-        shape.project_to_space_open_curves()
+        shape.project_to_space_closed_curves()
     alpha_t = compute_cov_derivative_path(alpha)
     alpha_pip = compute_Palais_inner_prod(alpha_t, alpha_t)
     alpha_path_len = compute_path_length(alpha_t)
     return alpha, alpha_t, alpha_pip, alpha_path_len
 
 
-def compute_for_open_curves(q1,q2,steps):
+def compute_for_open_curves(q1, q2, steps):
 
     alpha = compute_on_sphere(q1, q2, steps)
     alpha_t = compute_cov_derivative_path(alpha)
@@ -178,6 +178,22 @@ def compute_for_open_curves_elastic(q1, q2, settings, rotation=False):
     geodesic.gamma = gamma
     return geodesic
 
+
+def compute_for_closed_curves_elastic(q1, q2, settings, rotation=False):
+
+    if rotation:
+        q2, R = utils.find_best_rotation(q1, q2)
+
+    gamma = DPmatchcy.match(q1.coords, q2.coords)
+    gamma = gamma*2*pi
+    q2n = q2.group_action_by_gamma(gamma)
+    alpha, alpha_t, alpha_pip, alpha_path_len = compute_for_closed_curves_approx(q1, q2n, settings)
+    geodesic = Geodesic()
+    geodesic.path = alpha
+    geodesic.tangent_vect = alpha_t
+    geodesic.geodesic_distance = alpha_path_len
+    geodesic.gamma = gamma
+    return geodesic
 
 def to_curve_path(shape_path):
     curve_path = []
