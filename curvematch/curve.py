@@ -31,6 +31,7 @@ class Curve():
 
     def dim(self):
         return self.coords.shape[0]
+
     def siz(self):
         if len(self.coords.shape) < 2:
             return 0
@@ -155,5 +156,15 @@ class Curve():
         for i in range(0, self.dim):
             coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])
         return Curve(coords)
-    
+
+
+    def least_variant_dimension(self):
+        dims_std = []
+        for i in xrange(self.dim()):
+            dims_std.append( np.std(self.coords[i, :]))
+        print dims_std
+        return np.array(dims_std).argmin()
+
+
+
 
