@@ -15,6 +15,7 @@ import numpy as np
 from math import pi
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
+import os
 
 
 
@@ -101,6 +102,7 @@ def load_curves_from_top_and_bottom(top_curves_file, bot_curves_file, connect=Fa
     bot_curves = []
     connected_curves = []
     for i in xrange(len(top_paths)):
+        print '\n', top_paths[i], '\n'
         current_top = Curve(file=top_paths[i])
         current_bot = Curve(file=bot_paths[i])
         if not connect:
@@ -150,25 +152,30 @@ def group_matching_batch(top_curves_file, bot_curves_file):
 
 
 def plot_matching(plot_title, curve1, curve2, lines=20, offset=5):
-    font = 11
-    shift_x = np.min(curve1.coords[0, :]) - np.min(curve2.coords[0, :])
-    shift_y = np.max(curve1.coords[1, :]) - np.max(curve2.coords[1, :])
 
-    curve2.coords[0] += shift_x
-    curve2.coords[1] += shift_y
-    shift_y_down = max(curve2.coords[0]) - min(curve1.coords[1]) + offset
-    curve2.coords[1] -= shift_y_down
+    dims = [0,1,2]
+    dims.remove(curve2.least_variant_dimension())
+
+    font = 11
+    shift_x = np.min(curve1.coords[dims[0], :]) - np.min(curve2.coords[dims[0], :])
+    shift_y = np.max(curve1.coords[dims[1], :]) - np.max(curve2.coords[dims[1], :])
+
+    curve2.coords[dims[0]] += shift_x
+    curve2.coords[dims[1]] += shift_y
+    shift_y_down = max(curve2.coords[dims[0]]) - min(curve1.coords[dims[1]]) + offset
+    curve2.coords[dims[1]] -= shift_y_down
     plt.tick_params(labelbottom=False, labelleft=False, labelright=False)
     plt.subplot(111)
     if plot_title:
         plt.title(plot_title, fontsize=font)
     line_step = curve1.siz() / lines
-    plt.plot(curve1.coords[0], curve1.coords[1])
-    plt.plot(curve2.coords[0], curve2.coords[1])
+    plt.plot(curve1.coords[dims[0]], curve1.coords[dims[1]])
+    plt.plot(curve2.coords[dims[0]], curve2.coords[dims[1]])
     for i in xrange(0, curve1.siz(), line_step):
-        plt.plot([curve1.coords[0][i], curve2.coords[0][i]],
-                [curve1.coords[1][i], curve2.coords[1][i]])
+        plt.plot([curve1.coords[dims[0]][i], curve2.coords[dims[0]][i]],
+                [curve1.coords[dims[1]][i], curve2.coords[dims[1]][i]])
     plt.savefig(plot_title + '.pdf') ##Just showing for testing purposes
+    print "Plot for Subject ", plot_title ," has been saved to ", os.getcwd()
     plt.close('all')
 
 
