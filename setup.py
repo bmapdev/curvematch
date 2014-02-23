@@ -31,7 +31,7 @@ if USE_CYTHON:
         Extension("curvematch.DPmatch.DPmatchcy", sources=["curvematch/DPmatch/DPmatchcy.pyx",
                                                            "curvematch/DPmatch/DPmatch.cpp",
                                                            "curvematch/DPmatch/shape.cpp"],
-        include_dirs = [np.get_include(), '.'], language='c++', pyrex_gdb=True)
+                  include_dirs=[np.get_include(), '.'], language='c++', pyrex_gdb=True)
         ]
     cmdclass.update({'build_ext': build_ext })
 else:
@@ -40,7 +40,7 @@ else:
          Extension("curvematch.DPmatch.DPmatchcy", sources=["curvematch/DPmatch/DPmatchcy.cpp",
                                                             "curvematch/DPmatch/DPmatch.cpp",
                                                             "curvematch/DPmatch/shape.cpp"],
-         include_dirs = [np.get_include(), '.'], language='c++')]
+                   include_dirs=[np.get_include(), '.'], language='c++')]
 
 
 setup(
