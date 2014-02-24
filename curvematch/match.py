@@ -19,7 +19,7 @@ import os
 
 
 
-def match_curve_pair(curvefilename1, curvefilename2, settings, rotation=False, siz=100, return_curves=False):
+def match_curve_pair(curvefilename1, curvefilename2, settings, rotation=True, siz=100, return_curves=False):
 
     c1 = Curve(file=curvefilename1)
     c2 = Curve(file=curvefilename2)
@@ -42,7 +42,7 @@ def match_curve_pair(curvefilename1, curvefilename2, settings, rotation=False, s
         return geodesic
 
 
-def elastic_curve_matching(template_curve, match_curve, settings, rotation=False):
+def elastic_curve_matching(template_curve, match_curve, settings, rotation=True):
     """
     Finds finds matching between curves using dynamic programing and,
     applies the gamma values from this matching to elastically match
@@ -65,7 +65,7 @@ def elastic_curve_matching(template_curve, match_curve, settings, rotation=False
     return matched_curve
 
 
-def get_group_matching(template_curve, match_curves, settings=False, resample_size=500, rotation=False, match=True):
+def get_group_matching(template_curve, match_curves, settings=False, resample_size=500, rotation=True, match=True):
     """
     Resamples all curves, and then preforms an elastic matching
     between every curve in match_curve_list and the template_curve.

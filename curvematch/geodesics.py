@@ -163,7 +163,7 @@ def compute_for_open_curves(q1, q2, steps):
     return alpha, alpha_t, alpha_pip, alpha_path_len
 
 
-def compute_for_open_curves_elastic(q1, q2, settings, rotation=False):
+def compute_for_open_curves_elastic(q1, q2, settings, rotation=True):
 
     if rotation:
         q2, R = utils.find_best_rotation(q1, q2)
@@ -180,7 +180,7 @@ def compute_for_open_curves_elastic(q1, q2, settings, rotation=False):
     return geodesic
 
 
-def compute_for_closed_curves_elastic(q1, q2, settings, rotation=False):
+def compute_for_closed_curves_elastic(q1, q2, settings, rotation=True):
 
     if rotation:
         q2, R = utils.find_best_rotation(q1, q2)
