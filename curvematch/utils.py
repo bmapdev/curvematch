@@ -41,9 +41,9 @@ def find_best_rotation(q1, q2):
     # A = q1.coords*q2.coords.transpose()
     U, S, V = LA.svd(A)
     if np.absolute(LA.det(U)*LA.det(V) -1) < 10*np.spacing(1):
-        S = np.eye(q1.dim)
+        S = np.eye(q1.dim())
     else:
-        S = np.eye(q1.dim)
+        S = np.eye(q1.dim())
         S[:, -1] = -S[:, -1]
     R = np.dot(np.dot(U, S), np.transpose(V))  # R=U*S*V' (matrix multiplication)
     q2new = q2.copy()
