@@ -129,8 +129,16 @@ class Curve():
                                                       cumulative_arc_length, self.coords[i, :])
         self.coords = newcoords
 
-    def readcurve(self,filename):
+    def readcurve(self, filename):
         self.coords, self.attributes, ismultiUCF = curveio.readcurve(filename)
+
+    def writecurve(self, filename, isMultilevelUCF=False):
+        # If coords is a horizontal (wide) array, make it vertical
+        rows, cols = self.coords.shape
+        if cols > rows:
+            self.coords = np.transpose(self.coords)
+
+        curveio.writecurve(filename, self.coords, [], isMultilevelUCF=isMultilevelUCF)
 
     def append_curve(self, other_curve, reverse=True):
         if self.dim() != other_curve.dim():
