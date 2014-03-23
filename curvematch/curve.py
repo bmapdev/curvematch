@@ -169,5 +169,4 @@ class Curve():
         dims_std = []
         for i in xrange(self.dim()):
             dims_std.append( np.std(self.coords[i, :]))
-        print dims_std
         return np.array(dims_std).argmin()
