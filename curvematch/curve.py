@@ -77,10 +77,10 @@ class Curve():
         xdoubleprime = np.gradient(xprime)
         ydoubleprime = np.gradient(yprime)
 
-        if self.dim == 2:
+        if self.dim() == 2:
             return (xprime*ydoubleprime - yprime*xdoubleprime)/ \
                         (xprime**2 + yprime**2)**1.5
-        elif self.dim == 3:
+        elif self.dim() == 3:
             zprime = np.gradient(self.coords[2,:])
             zdoubleprime = np.gradient(zprime)
             return np.sqrt((zdoubleprime*yprime - ydoubleprime*zprime)**2 +
@@ -156,15 +156,14 @@ class Curve():
                 print self.coords.shape, col.shape
 
     def reparameterize_by_gamma(self, gamma):
-        for i in range(0, self.dim):
-            self.coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])
+        for i in range(0, self.dim()):
+            self.coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz()), self.coords[i, :])
 
     def return_reparameterized_by_gamma(self, gamma):
         coords = self.coords.copy()
-        for i in range(0, self.dim):
-            coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz), self.coords[i, :])
+        for i in range(0, self.dim()):
+            coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz()), self.coords[i, :])
         return Curve(coords)
-
 
     def least_variant_dimension(self):
         dims_std = []
@@ -172,7 +171,3 @@ class Curve():
             dims_std.append( np.std(self.coords[i, :]))
         print dims_std
         return np.array(dims_std).argmin()
-
-
-
-
