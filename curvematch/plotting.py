@@ -19,7 +19,7 @@ from os import path
 def plot_curve(q1, fig_num=1, interactive=False, filename=None):
     fig = plt.figure(fig_num)
     ax = fig.gca(projection='3d')
-    if q1.dim == 3:
+    if q1.dim() == 3:
         ax.plot(q1.coords[0, :], q1.coords[1, :], q1.coords[2, :])
     else:
         ax.plot(q1.coords[0, :], q1.coords[1, :])
@@ -27,7 +27,8 @@ def plot_curve(q1, fig_num=1, interactive=False, filename=None):
     plt.autoscale(tight=True)
     plt.axis('equal')
     plt.axis('off')
-    ax.view_init(90, -90)
+    # ax.view_init(0, 90)
+    ax.autoscale_view()
 
     # plt.tight_layout(0.0)
     # fig.set_tight_layout(True)
