@@ -58,7 +58,7 @@ def elastic_curve_matching(template_curve, match_curve, settings, rotation=True)
         geodesic = geodesics.compute_for_open_curves_elastic(qt, qm, settings, rotation)
 
     matched_curve = match_curve
-    for i in range(0, match_curve.dim()):
+    for i in xrange(match_curve.dim()):
         matched_curve.coords[i, :] = np.interp(geodesic.gamma, np.linspace(0, 2*pi, match_curve.siz()),
                                                match_curve.coords[i, :])
     match_curve.gamma = geodesic.gamma
@@ -173,9 +173,9 @@ def plot_matching(plot_title, curve1, curve2, lines=20, offset=5):
     plt.plot(curve2.coords[dims[0]], curve2.coords[dims[1]])
     for i in xrange(0, curve1.siz(), line_step):
         plt.plot([curve1.coords[dims[0]][i], curve2.coords[dims[0]][i]],
-                [curve1.coords[dims[1]][i], curve2.coords[dims[1]][i]])
+                 [curve1.coords[dims[1]][i], curve2.coords[dims[1]][i]])
     plt.savefig(plot_title + '.pdf') ##Just showing for testing purposes
-    print "Plot for Subject ", plot_title ," has been saved to ", os.getcwd()
+    print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
     plt.close('all')
 
 
