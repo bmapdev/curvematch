@@ -90,10 +90,27 @@ def get_group_matching(template_curve, match_curves, settings=False, resample_si
 
 
 def load_curves_from_top_and_bottom(top_curves_file, bot_curves_file, connect=False):
-    top_paths = open(top_curves_file, 'r')
-    bot_paths = open(bot_curves_file, 'r')
-    top_paths = top_paths.read().split('\n')
-    bot_paths = bot_paths.read().split('\n')
+    """
+    Reads in paths from either from
+    1) Newline seperated text files.
+        e.g. group_match_batch("~/top_curve_paths.txt,~/bot_curve_paths.txt")
+    2) Ordered lists of curve file paths.
+        e.g. group_match_batch([top_curve_path_1,top_curve_path_2,...],
+                               [bot_curve_path_1,bot_curve_path_2,...])
+
+     The first curve listed will be
+    used as the template curve.
+    """
+    if type(top_curves_file) == str:
+        top_paths = open(top_curves_file, 'r')
+        top_paths = top_paths.read().split('\n')
+    else:
+        top_paths = top_curves_file
+    if type(bot_curves_file) == str:
+        bot_paths = open(bot_curves_file, 'r')
+        bot_paths = bot_paths.read().split('\n')
+    else:
+        bot_paths = bot_curves_file
 
     if len(top_paths) != len(bot_paths):
         raise ValueError("Unequal number of top and bottom curves!")
@@ -120,10 +137,7 @@ def load_curves_from_top_and_bottom(top_curves_file, bot_curves_file, connect=Fa
 
 
 def group_matching_batch(top_curves_file, bot_curves_file):
-    """
-    Reads in paths from newline seperated text files. The first curve listed will be
-    used as the template curve.
-    """
+
     curves_list = load_curves_from_top_and_bottom(top_curves_file, bot_curves_file, connect=True)
     template = curves_list[0]
     #print template
