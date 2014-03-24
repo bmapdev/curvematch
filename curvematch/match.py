@@ -122,6 +122,8 @@ def load_curves_from_top_and_bottom(top_curves_file, bot_curves_file, connect=Fa
         print '\n', top_paths[i], '\n'
         current_top = Curve(file=top_paths[i])
         current_bot = Curve(file=bot_paths[i])
+        standardize_callosal_curve_coordinates(current_top)
+        standardize_callosal_curve_coordinates(current_bot)
         if not connect:
             top_curves.append(current_top)
             current_bot.append(current_bot)
@@ -162,6 +164,26 @@ def group_matching_batch(top_curves_file, bot_curves_file):
     for curve in matched_curves:
         plot_matching("subject_open"+str(i), template, curve)
         i += 1
+
+def standardize_callosal_curve_coordinates(curve):
+    varance_ditionary = {}
+    for dim in xrange(curve.dim()):
+        varance_ditionary[np.std(curve.coords[dim, :])] = dim
+    keys = sorted(varance_ditionary.keys(), reverse=True)
+
+    newCoords = np.zeros((curve.dim(), curve.siz()))
+    i = 0
+    for key in keys:
+        newCoords[i, :] = curve.coords[varance_ditionary[key], :]
+        i += 1
+    #x = 0
+   # print curve.coords[x,0], " -> ",curve.coords[x,-1],'\n'
+    #if newCoords[x,0] > newCoords[x, -1]:
+     #   print "YUP!\n"
+      #  newCoords = newCoords[:, ::-1]
+
+    curve.coords = newCoords
+
 
 
 
