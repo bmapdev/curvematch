@@ -61,6 +61,7 @@ def elastic_curve_matching(template_curve, match_curve, settings, rotation=True)
     for i in xrange(match_curve.dim()):
         matched_curve.coords[i, :] = np.interp(geodesic.gamma, np.linspace(0, 2*pi, match_curve.siz()),
                                                match_curve.coords[i, :])
+    match_curve.geodesic = geodesic
     match_curve.gamma = geodesic.gamma
     return matched_curve
 
@@ -78,9 +79,11 @@ def get_group_matching(template_curve, match_curves, settings=False, resample_si
 
     if type(match_curves) != list and type(match_curves) != tuple:
         match_curves = [match_curves]
+    #standardize_callosal_curve_coordinates(template_curve)
     template_curve.resample_curve_uniform(resample_size)
     matched_curves_list = []
     for current_curve in match_curves:
+        #standardize_callosal_curve_coordinates(current_curve)
         current_curve.resample_curve_uniform(resample_size)
         if match:
             matched_curves_list.append(elastic_curve_matching(template_curve, current_curve, settings, rotation))
@@ -106,6 +109,7 @@ def load_curves_from_top_and_bottom(top_curves_file, bot_curves_file, connect=Fa
         top_paths = top_paths.read().split('\n')
     else:
         top_paths = top_curves_file
+
     if type(bot_curves_file) == str:
         bot_paths = open(bot_curves_file, 'r')
         bot_paths = bot_paths.read().split('\n')
@@ -164,6 +168,11 @@ def group_matching_batch(top_curves_file, bot_curves_file):
     for curve in matched_curves:
         plot_matching("subject_open"+str(i), template, curve)
         i += 1
+    i = 1
+    for curve in matched_curves:
+        simple_curve_plot("subject_geodesic"+str(i), curve.gamma)
+        i += 1
+
 
 def standardize_callosal_curve_coordinates(curve):
     varance_ditionary = {}
@@ -189,32 +198,43 @@ def standardize_callosal_curve_coordinates(curve):
 
 def plot_matching(plot_title, curve1, curve2, lines=20, offset=5):
 
-    dims = [0,1,2]
-    dims.remove(curve2.least_variant_dimension())
+    dims1 = [0,1,2]
+    dims1.remove(curve1.least_variant_dimension())
 
+    dims2 = [0,1,2]
+    dims2.remove(curve2.least_variant_dimension())
     font = 11
-    shift_x = np.min(curve1.coords[dims[0], :]) - np.min(curve2.coords[dims[0], :])
-    shift_y = np.max(curve1.coords[dims[1], :]) - np.max(curve2.coords[dims[1], :])
+    shift_x = np.min(curve1.coords[dims1[0], :]) - np.min(curve2.coords[dims2[0], :])
+    shift_y = np.max(curve1.coords[dims1[1], :]) - np.max(curve2.coords[dims2[1], :])
 
-    curve2.coords[dims[0]] += shift_x
-    curve2.coords[dims[1]] += shift_y
-    shift_y_down = max(curve2.coords[dims[0]]) - min(curve1.coords[dims[1]]) + offset
-    curve2.coords[dims[1]] -= shift_y_down
+    curve2.coords[dims2[0]] += shift_x
+    curve2.coords[dims2[1]] += shift_y
+    shift_y_down = max(curve2.coords[dims2[0]]) - min(curve1.coords[dims1[1]]) + offset
+    curve2.coords[dims2[1]] -= shift_y_down
     plt.tick_params(labelbottom=False, labelleft=False, labelright=False)
     plt.subplot(111)
     if plot_title:
         plt.title(plot_title, fontsize=font)
     line_step = curve1.siz() / lines
-    plt.plot(curve1.coords[dims[0]], curve1.coords[dims[1]])
-    plt.plot(curve2.coords[dims[0]], curve2.coords[dims[1]])
+    plt.plot(curve1.coords[dims1[0]], curve1.coords[dims1[1]])
+    plt.plot(curve2.coords[dims2[0]], curve2.coords[dims2[1]])
     for i in xrange(0, curve1.siz(), line_step):
-        plt.plot([curve1.coords[dims[0]][i], curve2.coords[dims[0]][i]],
-                 [curve1.coords[dims[1]][i], curve2.coords[dims[1]][i]])
+        plt.plot([curve1.coords[dims1[0]][i], curve2.coords[dims2[0]][i]],
+                 [curve1.coords[dims1[1]][i], curve2.coords[dims2[1]][i]])
     plt.savefig(plot_title + '.pdf') ##Just showing for testing purposes
     print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
     plt.close('all')
 
 
+def simple_curve_plot(plot_title, coords):
+    plt.tick_params(labelbottom=False, labelleft=False, labelright=False)
+    plt.subplot(111)
+    if plot_title:
+        plt.title(plot_title, fontsize=12)
+    plt.plot(coords)
+    plt.savefig(plot_title + '.pdf')
+    print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
+    plt.close('all')
 
 
 
