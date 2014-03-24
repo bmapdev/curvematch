@@ -15,6 +15,7 @@ import numpy as np
 from math import pi
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
+import plotting
 import os
 
 
@@ -154,23 +155,23 @@ def group_matching_batch(top_curves_file, bot_curves_file):
     i = 1
     matched_curves = get_group_matching(template, curves_list[1:], match=False)
     for curve in matched_curves:
-        plot_matching("subject_uniform"+str(i), template, curve)
+        plotting.plot_matching("uniform_match"+str(i), template, curve)
         i += 1
 
     matched_curves = get_group_matching(template, curves_list[1:], match=True)
     i = 1
     for curve in matched_curves:
-        plot_matching("subject_closed"+str(i), template, curve)
+        plotting.plot_matching("elastic_closed_match"+str(i), template, curve)
         i += 1
     settings.closed = False
 
     i = 1
     for curve in matched_curves:
-        plot_matching("subject_open"+str(i), template, curve)
+        plotting.plot_matching("elastic_open_match"+str(i), template, curve)
         i += 1
     i = 1
     for curve in matched_curves:
-        simple_curve_plot("subject_geodesic"+str(i), curve.gamma)
+        plotting.simple_curve_plot("gamma"+str(i), curve.gamma)
         i += 1
 
 
@@ -192,80 +193,3 @@ def standardize_callosal_curve_coordinates(curve):
       #  newCoords = newCoords[:, ::-1]
 
     curve.coords = newCoords
-
-
-
-
-def plot_matching(plot_title, curve1, curve2, lines=20, offset=5):
-
-    dims1 = [0,1,2]
-    dims1.remove(curve1.least_variant_dimension())
-
-    dims2 = [0,1,2]
-    dims2.remove(curve2.least_variant_dimension())
-    font = 11
-    shift_x = np.min(curve1.coords[dims1[0], :]) - np.min(curve2.coords[dims2[0], :])
-    shift_y = np.max(curve1.coords[dims1[1], :]) - np.max(curve2.coords[dims2[1], :])
-
-    curve2.coords[dims2[0]] += shift_x
-    curve2.coords[dims2[1]] += shift_y
-    shift_y_down = max(curve2.coords[dims2[0]]) - min(curve1.coords[dims1[1]]) + offset
-    curve2.coords[dims2[1]] -= shift_y_down
-    plt.tick_params(labelbottom=False, labelleft=False, labelright=False)
-    plt.subplot(111)
-    if plot_title:
-        plt.title(plot_title, fontsize=font)
-    line_step = curve1.siz() / lines
-    plt.plot(curve1.coords[dims1[0]], curve1.coords[dims1[1]])
-    plt.plot(curve2.coords[dims2[0]], curve2.coords[dims2[1]])
-    for i in xrange(0, curve1.siz(), line_step):
-        plt.plot([curve1.coords[dims1[0]][i], curve2.coords[dims2[0]][i]],
-                 [curve1.coords[dims1[1]][i], curve2.coords[dims2[1]][i]])
-    plt.savefig(plot_title + '.pdf') ##Just showing for testing purposes
-    print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
-    plt.close('all')
-
-
-def simple_curve_plot(plot_title, coords):
-    plt.tick_params(labelbottom=False, labelleft=False, labelright=False)
-    plt.subplot(111)
-    if plot_title:
-        plt.title(plot_title, fontsize=12)
-    plt.plot(coords)
-    plt.savefig(plot_title + '.pdf')
-    print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
-    plt.close('all')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

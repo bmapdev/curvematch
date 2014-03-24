@@ -14,6 +14,8 @@ if not Settings.interactive_mode:
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from os import path
+import os
+import numpy as np
 
 
 def plot_curve(q1, fig_num=1, interactive=False, filename=None):
@@ -77,3 +79,43 @@ def SaveFigureAsImage(fileName,fig=None,**kwargs):
     plt.xlim(0,h); plt.ylim(w,0)
     fig.savefig(fileName, transparent=True, bbox_inches='tight', \
                         pad_inches=0)
+
+
+def plot_matching(plot_title, curve1, curve2, lines=20, offset=5):
+
+    dims1 = [0,1,2]
+    dims1.remove(curve1.least_variant_dimension())
+
+    dims2 = [0,1,2]
+    dims2.remove(curve2.least_variant_dimension())
+    font = 11
+    shift_x = np.min(curve1.coords[dims1[0], :]) - np.min(curve2.coords[dims2[0], :])
+    shift_y = np.max(curve1.coords[dims1[1], :]) - np.max(curve2.coords[dims2[1], :])
+
+    curve2.coords[dims2[0]] += shift_x
+    curve2.coords[dims2[1]] += shift_y
+    shift_y_down = max(curve2.coords[dims2[0]]) - min(curve1.coords[dims1[1]]) + offset
+    curve2.coords[dims2[1]] -= shift_y_down
+    plt.tick_params(labelbottom=False, labelleft=False, labelright=False)
+    plt.subplot(111)
+    if plot_title:
+        plt.title(plot_title, fontsize=font)
+    line_step = curve1.siz() / lines
+    plt.plot(curve1.coords[dims1[0]], curve1.coords[dims1[1]])
+    plt.plot(curve2.coords[dims2[0]], curve2.coords[dims2[1]])
+    for i in xrange(0, curve1.siz(), line_step):
+        plt.plot([curve1.coords[dims1[0]][i], curve2.coords[dims2[0]][i]],
+                 [curve1.coords[dims1[1]][i], curve2.coords[dims2[1]][i]])
+    plt.savefig(plot_title + '.pdf') ##Just showing for testing purposes
+    print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
+    plt.close('all')
+
+def simple_curve_plot(plot_title, coords):
+    plt.tick_params(labelbottom=False, labelleft=False, labelright=False)
+    plt.subplot(111)
+    if plot_title:
+        plt.title(plot_title, fontsize=12)
+    plt.plot(coords)
+    plt.savefig(plot_title + '.pdf')
+    print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
+    plt.close('all')
