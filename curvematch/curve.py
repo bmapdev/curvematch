@@ -20,6 +20,10 @@ class Curve():
             self.readcurve(file)
             coords = self.coords
 
+        if isinstance(coords, list):
+            if len(coords) > 1: # If more than one levels of curves present, then just select the first level
+                coords = coords[0]
+
         if coords.size != 0:
             n, T = coords.shape
             if n > T:
@@ -136,9 +140,9 @@ class Curve():
         # If coords is a horizontal (wide) array, make it vertical
         rows, cols = self.coords.shape
         if cols > rows:
-            self.coords = np.transpose(self.coords)
+            coords = np.transpose(self.coords)
 
-        curveio.writecurve(filename, self.coords, [], isMultilevelUCF=isMultilevelUCF)
+        curveio.writecurve(filename, coords, [], isMultilevelUCF=isMultilevelUCF)
 
     def append_curve(self, other_curve, reverse=True):
         if self.dim() != other_curve.dim():
@@ -160,10 +164,9 @@ class Curve():
             self.coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz()), self.coords[i, :])
 
     def return_reparameterized_by_gamma(self, gamma):
-        coords = self.coords.copy()
-        for i in range(0, self.dim()):
-            coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz()), self.coords[i, :])
-        return Curve(coords)
+        cnew = Curve(self.coords)
+        cnew.reparameterize_by_gamma(gamma)
+        return cnew
 
     def least_variant_dimension(self):
         dims_std = []
