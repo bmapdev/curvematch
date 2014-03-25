@@ -19,28 +19,47 @@ import plotting
 import os
 
 
+def match_curve_pair(curve_target_filename, curve_source_filename, settings, rotation=True, siz=100, return_curves=False, linear=False):
 
-def match_curve_pair(curvefilename1, curvefilename2, settings, rotation=True, siz=100, return_curves=False):
+    c_target = Curve(file=curve_target_filename)
+    c_source = Curve(file=curve_source_filename)
+    c_target.resample_curve_uniform(siz)
+    c_source.resample_curve_uniform(siz)
 
-    c1 = Curve(file=curvefilename1)
-    c2 = Curve(file=curvefilename2)
-    c1.resample_curve_uniform(siz)
-    c2.resample_curve_uniform(siz)
-
-    q1 = QShape()
-    q2 = QShape()
-    q1.from_curve(c1)
-    q2.from_curve(c2)
+    q_target = QShape()
+    q_source = QShape()
+    q_target.from_curve(c_target)
+    q_source.from_curve(c_source)
 
     if settings.closed:
-        geodesic = geodesics.compute_for_closed_curves(q1, q2, settings)
+        geodesic = geodesics.compute_for_closed_curves(q_target, q_source, settings)
     else:
-        geodesic = geodesics.compute_for_open_curves_elastic(q1, q2, settings, rotation)
+        geodesic = geodesics.compute_for_open_curves_elastic(q_target, q_source, settings, rotation, linear)
 
     if return_curves:
-        return geodesic, c1, c2
+        c_source_matched = c_source.return_reparameterized_by_gamma(geodesic.gamma)
+        return geodesic, c_target, c_source_matched
     else:
         return geodesic
+
+
+def match_curve_group(src_curve_paths, target, openflag=False, linearflag=False, norotateflag=False, resize=200):
+    settings = Settings()
+
+    if openflag:
+        settings.closed = False
+
+    geodesic_array = []
+    src_curve_matched_to_target_array = []
+    target_curve_array = []
+
+    for idx, src_curve in enumerate(src_curve_paths):
+        geodesic, target_curve, src_curve_matched_to_target = match_curve_pair(target, src_curve, settings, rotation=norotateflag, siz=resize, return_curves=True, linear=linearflag)
+        geodesic_array.append(geodesic)
+        src_curve_matched_to_target_array.append(src_curve_matched_to_target)
+        target_curve_array.append(target_curve)
+
+    return geodesic_array, src_curve_matched_to_target_array, target_curve_array
 
 
 def elastic_curve_matching(template_curve, match_curve, settings, rotation=True):
