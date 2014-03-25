@@ -35,7 +35,7 @@ def curve_match(src, target, openflag, linearflag, norotateflag, resize, noplotf
     if openflag:
         settings.closed = False
 
-    geodesic, src_curve_matched_to_target, target_curve = match.match_curve_pair(src, target, settings, rotation=norotateflag, siz=resize, return_curves=True)
+    geodesic, target_curve, src_curve_matched_to_target = match.match_curve_pair(target, src, settings, rotation=norotateflag, siz=resize, return_curves=True, linear=linearflag)
     curve_path = geodesics.to_curve_path(geodesic.path)
 
     if not os.path.exists(odir):
