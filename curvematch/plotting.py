@@ -110,7 +110,7 @@ def plot_matching(plot_title, curve1, curve2, lines=30, offset=5):
     print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
     plt.close('all')
 
-def simple_curve_plot(plot_title, coords):
+def scalar_function_plot(plot_title, coords):
     plt.tick_params(labelbottom=False, labelleft=False, labelright=False)
     plt.subplot(111)
     if plot_title:
