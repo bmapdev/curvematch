@@ -39,13 +39,13 @@ def find_best_rotation(q1, q2):
     #assumes starting points are fixed
     A = np.dot(q1.coords, q2.coords.transpose())
     # A = q1.coords*q2.coords.transpose()
-    U, S, V = LA.svd(A)
-    if np.absolute(LA.det(U)*LA.det(V) -1) < 10*np.spacing(1):
+    U, S, V_transpose = LA.svd(A) # linalg.svd actually returns U, S, and transpose(V)
+    if np.absolute(LA.det(U)*LA.det(V_transpose.transpose()) - 1) < 10*np.spacing(1):
         S = np.eye(q1.dim())
     else:
         S = np.eye(q1.dim())
         S[:, -1] = -S[:, -1]
-    R = np.dot(np.dot(U, S), np.transpose(V))  # R=U*S*V' (matrix multiplication)
+    R = np.dot(np.dot(U, S), V_transpose)  # R=U*S*V' (matrix multiplication)
     q2new = q2.copy()
     q2new.coords = np.dot(R, q2.coords)
     return q2new, R
