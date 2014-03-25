@@ -63,6 +63,7 @@ def curve_match_group(srclist, target, odirlist, openflag=False, linearflag=Fals
         src_curve_matched_to_target_array[idx].writecurve(os.path.join(output_dirs[idx], os.path.splitext(input_src_curve_name)[0] + '_matched.ucf'))
         target_curve_array[idx].writecurve(os.path.join(output_dirs[idx], input_target_curve_name))
         plotting.plot_matching(os.path.join(output_dirs[idx], "geodesic_alignment"), target_curve_array[idx], src_curve_matched_to_target_array[idx])
+        plotting.scalar_function_plot(os.path.join(output_dirs[idx], "gamma"), geodesic.gamma)
         np.savetxt(os.path.join(output_dirs[idx], 'geodesic_shape_distance.txt'), [geodesic.geodesic_distance], fmt='%.8f')
         np.savetxt(os.path.join(output_dirs[idx], 'reparameterization.txt'), geodesic.gamma, fmt='%.8f')
         np.savetxt(os.path.join(output_dirs[idx], 'tangent_vector.txt'), np.transpose(geodesic.tangent_vect[1].coords), fmt='%.8f')
