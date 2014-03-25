@@ -81,7 +81,7 @@ def SaveFigureAsImage(fileName,fig=None,**kwargs):
                         pad_inches=0)
 
 
-def plot_matching(plot_title, curve1, curve2, lines=20, offset=5):
+def plot_matching(plot_title, curve1, curve2, lines=30, offset=5):
 
     dims1 = [0,1,2]
     dims1.remove(curve1.least_variant_dimension())
