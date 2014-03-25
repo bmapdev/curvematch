@@ -163,12 +163,15 @@ def compute_for_open_curves(q1, q2, steps):
     return alpha, alpha_t, alpha_pip, alpha_path_len
 
 
-def compute_for_open_curves_elastic(q1, q2, settings, rotation=True):
+def compute_for_open_curves_elastic(q1, q2, settings, rotation=True, linear=False):
 
     if rotation:
         q2, R = utils.find_best_rotation(q1, q2)
 
-    gamma = DPmatchcy.match(q1.coords, q2.coords)
+    if not linear:
+        gamma = DPmatchcy.match(q1.coords, q2.coords)
+    else:
+        gamma = np.linspace(0, 1, q1.siz())
     gamma = gamma*2*pi
     q2n = q2.group_action_by_gamma(gamma)
     alpha, alpha_t, alpha_pip, alpha_path_len = compute_for_open_curves(q1, q2n, settings.steps)
