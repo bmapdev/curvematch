@@ -1,0 +1,3 @@
+curvematch/test/data/group/curve2_cc_JOINED.ucf
+curvematch/test/data/group/curve3_cc_JOINED.ucf
+curvematch/test/data/group/curve4_cc_JOINED.ucf
