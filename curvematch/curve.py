@@ -12,6 +12,7 @@ import numpy as np
 from numpy import linalg as LA
 from shapeio import curveio
 from math import pi
+import copy
 
 class Curve():
 
@@ -25,8 +26,9 @@ class Curve():
                 coords = coords[0]
 
         if coords.size != 0:
-            n, T = coords.shape
-            if n > T:
+            if len(coords.shape) == 1:
+                self.coords = np.array(coords)
+            elif coords.shape[0] > coords.shape[1]:
                 self.coords = np.transpose(coords)
             else:
                 self.coords = coords
@@ -160,16 +162,19 @@ class Curve():
                 print self.coords.shape, col.shape
 
     def reparameterize_by_gamma(self, gamma):
-        for i in range(0, self.dim()):
-            self.coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz()), self.coords[i, :])
+        if self.siz() > 0:
+            for i in xrange(0, self.dim()):
+                self.coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, self.siz()), self.coords[i, :])
+        else:
+            self.coords = np.interp(gamma, np.linspace(0, 2*pi, self.dim()), self.coords[:])
 
     def return_reparameterized_by_gamma(self, gamma):
-        cnew = Curve(self.coords)
+        cnew = copy.deepcopy(self)
         cnew.reparameterize_by_gamma(gamma)
         return cnew
 
     def least_variant_dimension(self):
         dims_std = []
         for i in xrange(self.dim()):
-            dims_std.append( np.std(self.coords[i, :]))
+            dims_std.append(np.std(self.coords[i, :]))
         return np.array(dims_std).argmin()
