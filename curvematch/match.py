@@ -76,13 +76,8 @@ def elastic_curve_matching(template_curve, match_curve, settings, rotation=True)
         geodesic = geodesics.compute_for_closed_curves_elastic(qt, qm, settings)
     else:
         geodesic = geodesics.compute_for_open_curves_elastic(qt, qm, settings, rotation)
-
-    matched_curve = match_curve
-    for i in xrange(match_curve.dim()):
-        matched_curve.coords[i, :] = np.interp(geodesic.gamma, np.linspace(0, 2*pi, match_curve.siz()),
-                                               match_curve.coords[i, :])
-    match_curve.geodesic = geodesic
-    match_curve.gamma = geodesic.gamma
+    matched_curve = match_curve.return_reparameterized_by_gamma(geodesic.gamma)
+    matched_curve.geodesic = geodesic
     return matched_curve
 
 
