@@ -81,7 +81,7 @@ def SaveFigureAsImage(fileName,fig=None,**kwargs):
                         pad_inches=0)
 
 
-def plot_matching(plot_title, curve1, curve2, lines=30, offset=5):
+def plot_matching(plot_title, curve1, curve2, lines=30, offset=5, outdir=''):
 
     dims1 = [0,1,2]
     dims1.remove(curve1.least_variant_dimension())
@@ -106,8 +106,8 @@ def plot_matching(plot_title, curve1, curve2, lines=30, offset=5):
     for i in xrange(0, curve1.siz(), line_step):
         plt.plot([curve1.coords[dims1[0]][i], curve2.coords[dims2[0]][i]],
                  [curve1.coords[dims1[1]][i], curve2.coords[dims2[1]][i]])
-    plt.savefig(plot_title + '.pdf') ##Just showing for testing purposes
-    print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
+    plt.savefig(os.path.join(outdir, plot_title) + '.pdf')
+    print "Plot for Subject ", plot_title, " has been saved to ", os.getcwd()
     plt.close('all')
 
 def scalar_function_plot(plot_title, coords):
