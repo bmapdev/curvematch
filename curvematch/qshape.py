@@ -82,7 +82,7 @@ class QShape():
             v[i, :] = (2 * pi / siz) * pdiff[i, :]
         coords = np.zeros(coords.shape)
         for i in xrange(siz):
-            coords[:, i] = v[:, i] / np.sqrt(LA.norm(v[:, i]))
+            coords[:, i] = v[:, i] / np.sqrt(LA.norm(v[:, i], ord=2))
 
         self.coords = coords
         self.project_b()
@@ -92,8 +92,8 @@ class QShape():
         s = np.linspace(0, 2*pi, self.siz())
         qnorm = np.zeros(self.siz())
         for i in xrange(self.siz()):
-            qnorm[i] = LA.norm(self.coords[:,i],2)
-        p = curve.Curve(np.zeros(self.shape()),[],self.dim(),self.siz())
+            qnorm[i] = LA.norm(self.coords[:,i ], ord=2)
+        p = curve.Curve(np.zeros(self.shape()), [], self.dim(), self.siz())
         for i in xrange(self.dim()):
             temp = self.coords[i, :] * qnorm
             p.coords[i, :] = integrate.cumtrapz(temp, s, initial=0)
@@ -168,7 +168,7 @@ class QShape():
             ev.append( np.tile(e[:, i], (self.siz(), 1)).transpose())
             qnorm = np.zeros(self.siz())
         for i in xrange(self.siz()):
-            qnorm[i] = LA.norm(self.coords[:, i])
+            qnorm[i] = LA.norm(self.coords[:, i], ord=2)
         del_g = {}
         for i in xrange(self.dim()):
             tmp1 = np.tile((self.coords[i, :] / qnorm), (self.dim(), 1))
