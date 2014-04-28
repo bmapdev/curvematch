@@ -19,7 +19,8 @@ import plotting
 import os
 
 
-def match_curve_pair(curve_target_filename, curve_source_filename, settings, rotation=True, siz=100, return_curves=False, linear=False):
+def match_curve_pair(curve_target_filename, curve_source_filename, settings, rotation=True, siz=100,
+                     return_curves=False, linear=False):
 
     c_target = Curve(file=curve_target_filename)
     c_source = Curve(file=curve_source_filename)
@@ -62,20 +63,24 @@ def match_curve_group(src_curve_paths, target, openflag=False, linearflag=False,
     return geodesic_array, src_curve_matched_to_target_array, target_curve_array
 
 
-def elastic_curve_matching(template_curve, match_curve, settings, rotation=True):
+def elastic_curve_matching(template_curve, match_curve, settings, linear=False, norotate=False, resize=200):
     """
-    Finds finds matching between curves using dynamic programing and,
+    Finds matching between curves using dynamic programing and,
     applies the gamma values from this matching to elastically match
     match_curve to template, and returns the matched curve.
     """
+    if type(template_curve) == str:
+        template_curve = Curve(template_curve)
+    if type(match_curve) == str:
+        match_curve = Curve(match_curve)
     qt = QShape()
     qm = QShape()
     qt.from_curve(template_curve)
     qm.from_curve(match_curve)
     if settings.closed:
-        geodesic = geodesics.compute_for_closed_curves_elastic(qt, qm, settings)
+        geodesic = geodesics.compute_for_closed_curves_elastic(qt, qm, settings, rotation=norotate, linear=linear)
     else:
-        geodesic = geodesics.compute_for_open_curves_elastic(qt, qm, settings, rotation)
+        geodesic = geodesics.compute_for_open_curves_elastic(qt, qm, settings,  rotation=norotate, linear=linear)
     matched_curve = match_curve.return_reparameterized_by_gamma(geodesic.gamma)
     matched_curve.geodesic = geodesic
     return matched_curve

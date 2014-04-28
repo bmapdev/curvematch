@@ -107,7 +107,7 @@ def plot_matching(plot_title, curve1, curve2, lines=30, offset=5, outdir=''):
         plt.plot([curve1.coords[dims1[0]][i], curve2.coords[dims2[0]][i]],
                  [curve1.coords[dims1[1]][i], curve2.coords[dims2[1]][i]])
     plt.savefig(os.path.join(outdir, plot_title) + '.pdf')
-    print "Plot for Subject ", plot_title, " has been saved to ", os.getcwd()
+    print "Plot for Subject ", plot_title, " has been saved"
     plt.close('all')
 
 def scalar_function_plot(plot_title, coords):
@@ -117,5 +117,5 @@ def scalar_function_plot(plot_title, coords):
         plt.title(plot_title, fontsize=12)
     plt.plot(coords)
     plt.savefig(plot_title + '.pdf')
-    print "Plot for Subject ", plot_title," has been saved to ", os.getcwd()
+    print "Plot for Subject ", plot_title ," has been saved"
     plt.close('all')
