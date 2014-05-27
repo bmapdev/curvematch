@@ -1,0 +1,14 @@
+package:
+    name: curvematch
+    version: "0.0.1"
+
+source:
+    git_url: https://bayers@bitbucket.org/shjoshi/curvematch.git
+requirements:
+    build:
+        - python
+        - numpy
+    run:
+        - python
+        - numpy
+        - shapeio
