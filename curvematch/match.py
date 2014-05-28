@@ -13,8 +13,6 @@ import geodesics
 from curve import Curve
 import numpy as np
 from math import pi
-import matplotlib.pyplot as plt
-from matplotlib.axes import Axes
 import plotting
 import os
 
