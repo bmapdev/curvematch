@@ -127,6 +127,7 @@ class Curve():
         for i in range(0, self.siz()):
             arc_length[i] = LA.norm(curve_gradient[:, i])
 
+            arc_length[i] = LA.norm(curve_gradient[:, i], ord=2)
         cumulative_arc_length = np.cumsum(arc_length)
         newcoords = np.zeros((self.dim(), newsiz))
         for i in range(0, self.dim()):
