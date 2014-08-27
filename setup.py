@@ -46,11 +46,13 @@ else:
 setup(
     name='curvematch',
     version='0.1_dev',
-    packages=['curvematch', 'curvematch.DPmatch'],
+    packages=['curvematch', 'curvematch.test', 'curvematch.DPmatch'],
     package_dir={
-        'curvematch': base_dir,
-        'curvematch.DPmatch': base_dir + "/DPmatch",
-        },
+            'curvematch': base_dir,
+            'curvematch.DPmatch': base_dir + '/DPmatch',
+            'curvematch.test': base_dir + '/test'
+            },
+    package_data={'curvematch':['test/data/*.ucf', 'test/data/group/*']},
     scripts=['bin/curve_match.py',
              'bin/curve_match_group.py',
              ],

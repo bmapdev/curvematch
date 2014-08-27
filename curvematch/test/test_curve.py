@@ -9,8 +9,9 @@ __email__ = "s.joshi@ucla.edu"
 from curvematch.settings import Settings
 from curvematch.qshape import QShape
 from shapeio import curveio
+import pkg_resources
 
-Settings.output_dir = 'curvematch/test/data'
-curve1 = 'curvematch/test/data/curve1.ucf'
+Settings.output_dir = pkg_resources.resource_filename('curvematch', 'test/data')
+curve1 = pkg_resources.resource_filename('curvematch', 'test/data/curve1.ucf')
 
 

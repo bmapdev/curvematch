@@ -13,11 +13,12 @@ import time
 from curvematch.settings import Settings
 from sys import stdout
 import numpy as np
+import pkg_resources
 
-Settings.output_dir = 'curvematch/test/test/data'
+Settings.output_dir = pkg_resources.resource_filename('curvematch', 'test/test/data')
 Settings.steps = 7
-curve1 = 'curvematch/test/data/q1_partial.ucf'
-curve2 = 'curvematch/test/data/q2_partial.ucf'
+curve1 = pkg_resources.resource_filename('curvematch', 'test/data/q1_partial.ucf')
+curve2 = pkg_resources.resource_filename('curvematch', 'test/data/q2_partial.ucf')
 
 
 def test_geodesic_on_sphere():

@@ -13,10 +13,11 @@ import time
 from curvematch.DPmatch import DPmatchcy
 from curvematch.settings import Settings
 from sys import stdout
+import pkg_resources
 
-Settings.output_dir = 'curvematch/test/data'
-curve1 = 'curvematch/test/data/curve1.ucf'
-curve2 = 'curvematch/test/data/curve2.ucf'
+Settings.output_dir = pkg_resources.resource_filename('curvematch', 'test/data')
+curve1 = pkg_resources.resource_filename('curvematch', 'test/data/curve1.ucf')
+curve2 = pkg_resources.resource_filename('curvematch','test/data/curve2.ucf')
 
 
 def test_DP_matchcy():

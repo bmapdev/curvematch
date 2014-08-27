@@ -15,12 +15,13 @@ from curvematch import plotting
 from curvematch import geodesics
 import time
 from sys import stdout
+import pkg_resources
 
-Settings.output_dir = 'curvematch/test/data'
-curve1 = 'curvematch/test/data/sulcus1.ucf'
-curve2 = 'curvematch/test/data/sulcus2.ucf'
-# curve1 = 'curvematch/test/data/curve1.ucf'
-# curve2 = 'curvematch/test/data/curve2.ucf'
+Settings.output_dir = pkg_resources.resource_filename('curvematch', 'test/data')
+curve1 = pkg_resources.resource_filename('curvematch', 'test/data/sulcus1.ucf')
+curve2 = pkg_resources.resource_filename('curvematch', 'test/data/sulcus2.ucf')
+# curve1 = pkg_resources.resource_filename('curvematch', 'test/data/curve1.ucf')
+# curve2 = pkg_resources.resource_filename('curvematch', 'test/data/curve2.ucf')
 
 settings = Settings()
 settings.closed = False

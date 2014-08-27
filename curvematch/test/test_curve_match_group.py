@@ -9,12 +9,13 @@ __email__ = "s.joshi@ucla.edu"
 from curvematch import match
 from curvematch import plotting
 from curvematch import geodesics
+import pkg_resources
 import numpy as np
 import os
 
-srclist = 'curvematch/test/data/group/curvelist.txt'
-target = 'curvematch/test/data/group/curve1_cc_JOINED.ucf'
-odirlist = 'curvematch/test/data/group/odirlist.txt'
+srclist = pkg_resources.resource_filename('curvematch', 'test/data/group/curvelist.txt')
+target = pkg_resources.resource_filename('curvematch', 'test/data/group/curve1_cc_JOINED.ucf')
+odirlist = pkg_resources.resource_filename('curvematch', 'test/data/group/odirlist.txt')
 
 def test_curvematch_group():
 

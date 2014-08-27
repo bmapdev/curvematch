@@ -11,13 +11,15 @@ from shapeio import curveio
 import time
 from curvematch.DPmatch import DPmatchpy
 import numpy as np
+import pkg_resources
 from curvematch.settings import Settings
 from os import path
 from sys import stdout
 
-Settings.output_dir = 'curvematch/test/data'
-curve1 = 'curvematch/test/data/q1_partial.ucf'
-curve2 = 'curvematch/test/data/q2_partial.ucf'
+
+Settings.output_dir = pkg_resources.resource_filename('curvematch', 'test/data')
+curve1 = pkg_resources.resource_filename('curvematch', 'test/data/q1_partial.ucf')
+curve2 = pkg_resources.resource_filename('curvematch', 'test/data/q2_partial.ucf')
 
 
 def test_DP_match():

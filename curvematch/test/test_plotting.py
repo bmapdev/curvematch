@@ -10,9 +10,10 @@ from curvematch import plotting
 from curvematch.settings import Settings
 from shapeio import curveio
 from curvematch.qshape import QShape
+import pkg_resources
 
-Settings.output_dir = 'curvematch/test/data'
-curve1 = 'curvematch/test/data/curve1.ucf'
+Settings.output_dir = pkg_resources.resource_filename('curvematch', 'curvematch/test/data')
+curve1 = pkg_resources.resource_filename('curvematch', 'test/data/curve1.ucf')
 
 
 def test_plotcurve_with_name():
