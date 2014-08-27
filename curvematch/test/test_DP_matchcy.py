@@ -8,6 +8,7 @@ __email__ = "s.joshi@ucla.edu"
 
 from shapeio import curveio
 from curvematch.qshape import QShape
+import numpy as np
 
 import time
 from curvematch.DPmatch import DPmatchcy
@@ -29,9 +30,11 @@ def test_DP_matchcy():
     q2 = QShape(X2)
     t = time.time()
     gamma = DPmatchcy.match(q1.coords, q2.coords)
+    gamma = 2 * np.pi * gamma/np.max(gamma)
     print gamma
 
     elapsed = time.time() - t
     stdout.write('\nElapsed time ' + str(elapsed))
     stdout.flush()
+    return gamma
 
