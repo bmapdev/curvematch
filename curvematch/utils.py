@@ -51,3 +51,15 @@ def find_best_rotation(q1, q2):
     return q2new, R
 
 
+def reparameterize_by_gamma(coords, gamma):
+    dim = np.shape(coords)[0]
+    if len(np.shape(coords)) > 1:
+        siz = np.shape(coords)[1]
+    else:
+        siz = 0
+    if siz > 0:
+        for i in xrange(0, dim):
+                coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, siz), coords[i, :])
+    else:
+        coords = np.interp(gamma, np.linspace(0, 2*pi, dim), coords[:])
+    return coords
