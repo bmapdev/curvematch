@@ -14,7 +14,8 @@ from shapeio import curveio
 from math import pi
 import copy
 
-class Curve():
+
+class Curve(object):
 
     def __init__(self, coords=np.array([]), attributes=[], dim=0, siz=0, file=None):
         if file is not None:
@@ -35,6 +36,21 @@ class Curve():
         else:
             self.coords = np.array([])
 
+    def __add__(self, q):
+        return Curve(self.coords + q.coords)
+
+    def __sub__(self, q):
+        return Curve(self.coords - q.coords)
+
+    def __mul__(self, x):
+        return Curve(self.coords * x)
+
+    def __rmul__(self, x):
+        return Curve(self.coords * x)
+
+    def __div__(self, x):
+        return Curve(self.coords / x)
+
     def dim(self):
         return self.coords.shape[0]
 
@@ -50,6 +66,9 @@ class Curve():
         else:
             return 0, 0
 
+    def copy(self):
+        return Curve(copy.copy(self.coords))
+
         # self.coords = np.transpose(coords)
         # self.attributes = attributes
         # self.dim = dim
@@ -61,14 +80,14 @@ class Curve():
         #     self.siz = self.coords.shape[1]
         #     self.shape = (self.dim, self.siz)
 
-    def winding_number(self):
-        pass
+    # def winding_number(self):
+     #   pass
 
-    def estimate_pose(self):
-        pass
+    #def estimate_pose(self):
+       # pass
 
-    def repose_curve(self):
-        pass
+    # def repose_curve(self):
+        # pass
 
     def length(self):
         arc_length = np.empty((self.dim(), self.siz()))
@@ -78,24 +97,23 @@ class Curve():
         return sum(arc_length)
 
     def compute_curvature(self):
-        xprime = np.gradient(self.coords[0,:])
-        yprime = np.gradient(self.coords[1,:])
+        xprime = np.gradient(self.coords[0, :])
+        yprime = np.gradient(self.coords[1, :])
         xdoubleprime = np.gradient(xprime)
         ydoubleprime = np.gradient(yprime)
 
         if self.dim() == 2:
-            return (xprime*ydoubleprime - yprime*xdoubleprime)/ \
-                        (xprime**2 + yprime**2)**1.5
+            return (xprime*ydoubleprime - yprime*xdoubleprime) / (xprime**2 + yprime**2)**1.5
         elif self.dim() == 3:
             zprime = np.gradient(self.coords[2,:])
             zdoubleprime = np.gradient(zprime)
             return np.sqrt((zdoubleprime*yprime - ydoubleprime*zprime)**2 +
-                            (xdoubleprime*zprime - zdoubleprime*xprime)**2 +
-                            (ydoubleprime*xprime - xdoubleprime*yprime)**2)/ \
-                            (xprime**2 + yprime**2 + zprime**2)**1.5
+                           (xdoubleprime*zprime - zdoubleprime*xprime)**2 +
+                           (ydoubleprime*xprime - xdoubleprime*yprime)**2) / \
+                           (xprime**2 + yprime**2 + zprime**2)**1.5
 
-    def smooth_curve(self):
-        pass
+    #def smooth_curve(self):
+       # pass
 
     def remove_duplicate_vertices(self):
         epsilon = 1/20.0*1.0/self.siz()
@@ -110,8 +128,8 @@ class Curve():
         duplicate_status = arc_length > epsilon  # Where False, the index is duplicate
         self.coords = self.coords[:, duplicate_status]
 
-    def remove_traceover_defects(self):
-        pass
+    #def remove_traceover_defects(self):
+     #   pass
 
     def resample_curve_uniform(self, newsiz=None):
         if newsiz is None:

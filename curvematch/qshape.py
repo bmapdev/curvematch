@@ -15,7 +15,8 @@ import curve
 import utils
 import copy
 
-class QShape():
+
+class QShape(object):
 
     def __init__(self, coords=np.array([])):
 
@@ -24,22 +25,6 @@ class QShape():
                 self.coords = np.transpose(coords)
             else:
                 self.coords = coords
-
-    def dim(self):
-        return self.coords.shape[0]
-
-    def siz(self):
-        if len(self.coords.shape) < 2:
-            return 0
-        else:
-            return self.coords.shape[1]
-
-    def shape(self):
-        if len(self.coords.shape) > 1:
-            return self.coords.shape
-        else:
-            return 0, 0
-
 
     def __add__(self, q):
         return QShape(self.coords + q.coords)
@@ -55,6 +40,21 @@ class QShape():
 
     def __div__(self, x):
         return QShape(self.coords / x)
+
+    def dim(self):
+        return self.coords.shape[0]
+
+    def siz(self):
+        if len(self.coords.shape) < 2:
+            return 0
+        else:
+            return self.coords.shape[1]
+
+    def shape(self):
+        if len(self.coords.shape) > 1:
+            return self.coords.shape
+        else:
+            return 0, 0
 
     def copy(self):
         return QShape(copy.copy(self.coords))
@@ -88,11 +88,11 @@ class QShape():
         self.project_b()
         #self.ProjectC(q)
 
-    def to_curve(self):  # Return a curve object? Should we import curve?
+    def to_curve(self):
         s = np.linspace(0, 2*pi, self.siz())
         qnorm = np.zeros(self.siz())
         for i in xrange(self.siz()):
-            qnorm[i] = LA.norm(self.coords[:,i ], ord=2)
+            qnorm[i] = LA.norm(self.coords[:, i], ord=2)
         p = curve.Curve(np.zeros(self.shape()), [], self.dim(), self.siz())
         for i in xrange(self.dim()):
             temp = self.coords[i, :] * qnorm

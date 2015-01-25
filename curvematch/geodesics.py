@@ -15,18 +15,18 @@ from curvematch.DPmatch import DPmatchcy
 from qshape import QShape
 
 
-class Geodesic():
+class Geodesic(object):
     path = []
     gamma = []
     tangent_vect = []
     geodesic_distance = 0
 
 
-class GeodesicsClosed():
+class GeodesicsClosed(Geodesic):
     pass
 
 
-class GeodesicsOpen():
+class GeodesicsOpen(Geodesic):
     pass
 
 
@@ -75,7 +75,7 @@ def parallel_transport_tangent(tangent_vect, q1, q2):
 
 
 def compute_path_derivative(geodesic_path):
-# TODO uncomment the project to tangent
+    # TODO uncomment the project to tangent
     q = geodesic_path[:, :, 0]
     step = geodesic_path.shape[2]
     path_derivative = np.zeros((q.dim(), q.siz(), step))
@@ -144,6 +144,7 @@ def compute_cov_derivative_path(alpha):
         alpha_dt.append(project_tangent(tmp, alpha[tau]))
     return alpha_dt
 
+
 def compute_for_closed_curves_approx(q1, q2, settings):
     alpha = compute_on_sphere(q1, q2, settings.steps)
     for shape in alpha:
@@ -198,6 +199,7 @@ def compute_for_closed_curves_elastic(q1, q2, settings, rotation=True):
     geodesic.geodesic_distance = alpha_path_len
     geodesic.gamma = gamma
     return geodesic
+
 
 def to_curve_path(shape_path):
     curve_path = []

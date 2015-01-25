@@ -44,6 +44,7 @@ def plot_curve(q1, fig_num=1, interactive=False, filename=None):
         plt.savefig(path.join(Settings.output_dir, filename), bbox_inches='tight', pad_inches=0.0, dpi=300)
     return fig
 
+
 def plot_path(curve_path, filename=None):
     for i in xrange(0, len(curve_path)):
         curve_path[i].coords[0,:] += 0.2*i
@@ -54,8 +55,9 @@ def plot_path(curve_path, filename=None):
 def plot_deformationfield():
     pass
 
-def SaveFigureAsImage(fileName,fig=None,**kwargs):
-    ''' Save a Matplotlib figure as an image without borders or frames.
+
+def SaveFigureAsImage(fileName, fig=None, **kwargs):
+    """ Save a Matplotlib figure as an image without borders or frames.
        Args:
             fileName (str): String that ends in .png etc.
 
@@ -63,30 +65,34 @@ def SaveFigureAsImage(fileName,fig=None,**kwargs):
         Keyword Args:
             orig_size (tuple): width, height of the original image used to maintain
             aspect ratio.
-    '''
+    """
+
+
     fig_size = fig.get_size_inches()
-    w,h = fig_size[0], fig_size[1]
+    w, h = fig_size[0], fig_size[1]
     fig.patch.set_alpha(0)
-    if kwargs.has_key('orig_size'): # Aspect ratio scaling if required
+    if 'orig_size' in kwargs: # Aspect ratio scaling if required
         w,h = kwargs['orig_size']
         w2,h2 = fig_size[0],fig_size[1]
         fig.set_size_inches([(w2/w)*w,(w2/w)*h])
         fig.set_dpi((w2/w)*fig.get_dpi())
-    a=fig.gca()
+    a = fig.gca()
     a.set_frame_on(False)
-    a.set_xticks([]); a.set_yticks([])
+    a.set_xticks([])
+    a.set_yticks([])
     plt.axis('off')
-    plt.xlim(0,h); plt.ylim(w,0)
+    plt.xlim(0, h)
+    plt.ylim(w, 0)
     fig.savefig(fileName, transparent=True, bbox_inches='tight', \
-                        pad_inches=0)
+                pad_inches=0)
 
 
 def plot_matching(plot_title, curve1, curve2, lines=30, offset=5, outdir=''):
 
-    dims1 = [0,1,2]
+    dims1 = [0, 1, 2]
     dims1.remove(curve1.least_variant_dimension())
 
-    dims2 = [0,1,2]
+    dims2 = [0, 1, 2]
     dims2.remove(curve2.least_variant_dimension())
     font = 11
     shift_x = np.min(curve1.coords[dims1[0], :]) - np.min(curve2.coords[dims2[0], :])
@@ -109,6 +115,7 @@ def plot_matching(plot_title, curve1, curve2, lines=30, offset=5, outdir=''):
     plt.savefig(os.path.join(outdir, plot_title) + '.pdf')
     print "Plot for Subject ", plot_title, " has been saved"
     plt.close('all')
+
 
 def scalar_function_plot(plot_title, coords):
     plt.tick_params(labelbottom=False, labelleft=False, labelright=False)
