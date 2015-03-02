@@ -176,6 +176,35 @@ class QShape(object):
             del_g[i] = tmp1*self.coords + tmp2*ev[i]
         return del_g
 
+    def form_basis_d(self, d=5):
+        x = np.reshape(np.linspace(0, 2*pi, self.siz()), [1, self.siz()])
+        m = np.reshape(np.arange(1, d+1), [d, 1])
+        xdarray = np.dot(m, x)
+        V = np.vstack([np.cos(xdarray)/np.sqrt(pi), np.sin(xdarray)/np.sqrt(pi)])
+        return V
+
+    def form_basis_d_shape(self):
+        qdiff = np.zeros(self.shape())
+
+        #Compute derivatives of shape
+        for i in xrange(self.dim()):
+            qdiff[i, :] = np.gradient(self.coords[i, :], 2*pi/(self.siz()-1))
+
+        v = self.form_basis_d()
+        d = v.shape[0]
+
+        for i in xrange(d):
+            np.gradient(v[i, :], 2*pi/(self.siz()-1))
+        vdiff = np.zeros(v.shape)
+        d_q = np.zeros((self.dim(), self.siz(), d))
+        for i in xrange(d):
+            tmp1 = np.tile(v[i, :], [self.dim(), 1])
+            tmp2 = np.tile(vdiff[i, :], [self.dim(), 1])
+            d_q[:, :, i] = qdiff * tmp1 + 0.5 * self.coords * tmp2
+        return d_q
+
+
+
     def group_action_by_gamma(self, gamma):
         #gamma_orig = Estimate_Gamma(q)
         gamma_t = np.gradient(gamma, 2*pi/self.siz())
@@ -187,11 +216,10 @@ class QShape(object):
 
     def estimate_gamma(self):
         p = self.to_curve()
-        #Evaluate the arc-length function
-        s = np.linspace(0,2*pi,self.siz)
-        pgrad = np.gradient(p.coords, 2*pi/np.siz)
-        ds = np.sqrt(np.sum(pgrad**2, 0)) * np.siz
-        gamma = integrate.cumtrapz(ds, s) * 2*pi/np.max(integrate.cumtrapz(ds,s))
+        s = np.linspace(0, 2*pi, self.siz())
+        pgrad = np.gradient(p.coords, 2*pi/self.siz())[1]
+        ds = np.sqrt(np.sum(pgrad**2, 0)) * self.siz()
+        gamma = integrate.cumtrapz(ds, s, initial=0) * 2*pi/np.max(integrate.cumtrapz(ds, s, initial=0))
         return gamma
 
 

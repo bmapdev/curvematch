@@ -13,7 +13,6 @@ from numpy import linalg as LA
 
 
 def inner_prod(coords1, coords2):
-    # Assume coords1 and coords2 are numpy arrays
     value = np.trapz(sum(coords1*coords2), np.linspace(0, 2*pi, coords1.shape[1]))
     return value
 
@@ -63,3 +62,15 @@ def reparameterize_by_gamma(coords, gamma):
     else:
         coords = np.interp(gamma, np.linspace(0, 2*pi, dim), coords[:])
     return coords
+
+def project_tangent_d_q(u, d_q):
+    n, T, d = d_q.shape
+    uproj = 0
+    a = np.zeros(d_q.shape[2])
+    for i in xrange(d):
+        a[i] = inner_prod(u, d_q[:, :, i])
+        uproj += a[i] * d_q[:, :, i]
+    a = np.reshape(a, (1, a.shape[0]))
+    return uproj, a
+
+
