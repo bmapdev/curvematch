@@ -10,12 +10,12 @@ from distutils.core import setup
 from distutils.extension import Extension
 import numpy as np
 
-USE_CYTHON = True
+USE_CYTHON = 'auto'
 
 if USE_CYTHON:
     try:
         from Cython.Distutils import build_ext
-    except ImportError:
+    except:
         if USE_CYTHON == 'auto':
             USE_CYTHON = False
         else:
