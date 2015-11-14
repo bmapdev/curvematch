@@ -1,4 +1,14 @@
-from distutils.core import setup
+#!/usr/bin/env python
+"""Setup file"""
+
+__author__ = "Shantanu H. Joshi"
+__copyright__ = "Copyright 2013, Shantanu H. Joshi, Brandon Ayers, \
+                 Ahmanson-Lovelace Brain Mapping Center, University of California Los Angeles"
+__email__ = "s.joshi@g.ucla.edu"
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 from distutils.extension import Extension
 import numpy as np
 
