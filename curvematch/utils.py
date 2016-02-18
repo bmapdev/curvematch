@@ -74,3 +74,6 @@ def project_tangent_d_q(u, d_q):
     return uproj, a
 
 
+def project_tangent_q(f, q):
+    fnew = f - inner_prod(f, q.coords)*q.coords
+    return fnew

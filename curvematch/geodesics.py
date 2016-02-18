@@ -53,6 +53,28 @@ def compute_flow(q1, tangent_vect, step):
     return qt, geodesic_path
 
 
+def compute_flow_open(q1, tangent_vect, step):
+    # TODO uncomment project to tangent
+    # TODO uncomment ProjectB
+
+    norm = np.sqrt(utils.inner_prod(tangent_vect, tangent_vect))
+    if norm <= 0.001:
+        return q1, tangent_vect
+
+    geodesic_path = []
+    qt = q1.copy()
+    geodesic_path.append(q1)
+    for i in range(1, step+1):
+        qt.coords += tangent_vect/step
+        qt.project_b()
+        geodesic_path.append(qt.copy())
+
+        tangent_vect = utils.project_tangent_q(tangent_vect, qt)
+        tangent_vect = tangent_vect*norm/np.sqrt(utils.inner_prod(tangent_vect, tangent_vect))
+
+    return tangent_vect, qt, geodesic_path
+
+
 def compute_Palais_inner_prod(tangent_vect1, tangent_vect2):
     steps = len(tangent_vect1)
     inner_prod_val = np.zeros(steps)
