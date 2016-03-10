@@ -145,7 +145,7 @@ def compute_on_sphere(q1, q2, steps):
 
 def compute_for_closed_curves(q1, q2, settings):
 
-    alpha = compute_on_sphere(q1, q2, steps)
+    alpha = compute_on_sphere(q1, q2, settings.steps)
     alpha = project_space_closed_curves(alpha)
     alpha_t = compute_cov_derivative_path(alpha)
     alpha_pip = compute_Palais_inner_prod(alpha_t, alpha_t)
