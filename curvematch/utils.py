@@ -8,12 +8,12 @@ __copyright__ = "Copyright 2013, Shantanu H. Joshi, Brandon Ayers, \
 __email__ = "ayersb@ucla.edu"
 
 import numpy as np
-from math import pi
+import math
 from numpy import linalg as LA
-
+import qshape
 
 def inner_prod(coords1, coords2):
-    value = np.trapz(sum(coords1*coords2), np.linspace(0, 2*pi, coords1.shape[1]))
+    value = np.trapz(sum(coords1*coords2), np.linspace(0, 2*math.pi, coords1.shape[1]))
     return value
 
 
@@ -77,3 +77,60 @@ def project_tangent_d_q(u, d_q):
 def project_tangent_q(f, q):
     fnew = f - inner_prod(f, q.coords)*q.coords
     return fnew
+
+def Gram_Schmidt(X):
+    epsilon = 0.00005
+    columns = len(X)
+    i = 0
+    r = 0
+    Y = []
+    Y.append(X[0])
+    while i < columns:
+        tempvect = 0
+        for j in range(0,i):
+            tempvect = (Y[j]*inner_prod(Y[j].coords, X[r].coords)) + tempvect
+
+        Atemp = X[r] - tempvect
+        if i == 0:
+            Y[0] = Atemp
+        else:
+            Y.append(Atemp)
+        tmp = inner_prod(Y[i].coords,Y[i].coords)
+        if tmp>epsilon:
+            Y[i] = Y[i]/math.sqrt(tmp)
+            i = i+1
+            r = r+1
+        else:
+            if r < i:
+                r = r+1
+            else:
+                break
+    return Y
+
+def Project_To_Basis(alpha_t_array,Y):
+    n,T = Y[0].shape()
+    Xproj = []
+    for i in range(0,len(alpha_t_array)):
+        arr = []
+        for j in range(0,len(Y)):
+            temp = inner_prod(alpha_t_array[i].coords, Y[j].coords)
+            arr.append(temp)
+        Xproj.append(arr)
+    return Xproj
+
+
+
+'''
+function [Xproj,X] = Project_To_Basis(alpha_t_array,Y)
+
+[n,T] = size(Y{1});
+for i = 1:length(alpha_t_array);
+    X{i} = zeros(n,T);
+    for j = 1:length(Y)
+        Xproj(i,j) = InnerProd_Q(alpha_t_array{i},Y{j});
+        X{i} = X{i} + Xproj(i,j) * Y{j};
+    end
+end
+
+return;
+'''
