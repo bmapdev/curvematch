@@ -27,10 +27,16 @@ class QShape(object):
                 self.coords = coords
 
     def __add__(self, q):
-        return QShape(self.coords + q.coords)
+        if type(q) == int:
+            return QShape(self.coords + q)
+        elif type(q) == QShape:
+            return QShape(self.coords + q.coords)
 
     def __sub__(self, q):
-        return QShape(self.coords - q.coords)
+        if type(q) == int:
+            return QShape(self.coords - q)
+        elif type(q) == QShape:
+            return QShape(self.coords - q.coords)
 
     def __mul__(self, x):
         return QShape(self.coords * x)
@@ -221,6 +227,3 @@ class QShape(object):
         ds = np.sqrt(np.sum(pgrad**2, 0)) * self.siz()
         gamma = integrate.cumtrapz(ds, s, initial=0) * 2*pi/np.max(integrate.cumtrapz(ds, s, initial=0))
         return gamma
-
-
-
