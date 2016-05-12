@@ -59,6 +59,7 @@ def curve_mean(srclist, odir, openflag=False, linearflag=False, norotateflag=Fal
     for i in range(0,len(tangent_vectors)):
         temp_str = 'tangent_vector_'+ str(i) +'.txt'
         np.savetxt(os.path.join(odir, temp_str), tangent_vectors[i].coords)
+    return qmean,tangent_vectors
 
 if __name__ == '__main__':
     main()
