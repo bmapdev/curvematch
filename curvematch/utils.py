@@ -118,19 +118,49 @@ def Project_To_Basis(alpha_t_array,Y):
         Xproj.append(arr)
     return Xproj
 
+def Form_Basis_D(d,T):
+    x = np.linspace(0,1,T)
+    xdarray = np.zeros((1,d))
+    for i in range(d):
+        xdarray[0,i] = i+1
+    xdarray = np.dot(np.transpose(xdarray), x)
+    V = [np.ones((1,T))*np.sqrt(2),np.sqrt(2)*np.cos(2*math.pi*xdarray), np.sqrt(2)*np.sin(2*math.pi*xdarray) ]
+    return V
 
+def Form_Basis_L2_R(d, T):
+    x = np.linspace(0,1,T)
+    k = 0
+    B = []
+    for j in range(1,d+1):
+        B.append([np.sqrt(2)*np.cos(2*math.pi*j*x), np.zeros((1, T)), np.zeros((1, T))])
+        B.append([np.zeros((1, T)), np.sqrt(2)*np.cos(2*math.pi*j*x), np.zeros((1, T))])
+        B.append([np.zeros((1, T)), np.zeros((1, T)), np.sqrt(2)*np.cos(2*math.pi*j*x)])
+        B.append([np.sqrt(2)*np.sin(2*math.pi*j*x), np.zeros((1, T)), np.zeros((1, T))])
+        B.append([np.zeros((1, T)), np.sqrt(2)*np.sin(2*math.pi*j*x), np.zeros((1, T))])
+        B.append([np.zeros((1, T)), np.zeros((1, T)), np.sqrt(2)*np.sin(2*math.pi*j*x)])
+        k=k+1
 
-'''
-function [Xproj,X] = Project_To_Basis(alpha_t_array,Y)
+    return B
 
-[n,T] = size(Y{1});
-for i = 1:length(alpha_t_array);
-    X{i} = zeros(n,T);
-    for j = 1:length(Y)
-        Xproj(i,j) = InnerProd_Q(alpha_t_array{i},Y{j});
-        X{i} = X{i} + Xproj(i,j) * Y{j};
-    end
-end
+def Form_Basis_L2_R3(d, T):
+    B = []
+    constB = []
+    constB.append([np.sqrt(2)*np.ones((1, T)), np.zeros((1, T)), np.zeros((1, T))])
+    constB.append([np.zeros((1, T)), np.sqrt(2)*np.ones((1, T)), np.zeros((1, T))])
+    constB.append([np.zeros((1, T)), np.zeros((1, T)), np.sqrt(2)*np.ones((1, T))])
+    B.append(constB)
+    B.append(Form_Basis_L2_R(d,T))
+    return B
 
-return;
-'''
+def Form_Basis_O_q(B,q):
+    d = len(B)
+    #Needs to be completed
+
+def Form_Basis_of_Tangent_Space_of_S_at_q(Bnew, G_O_q):
+    G = []
+    for j in range(len(Bnew)):
+        tmp = 0
+        for k in range(len(G_O_q)):
+            tmp += np.dot(inner_prod(Bnew[j], G_O_q[k]), G_O_q[k])
+        G.append(Bnew[j] - tmp)
+    return G
