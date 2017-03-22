@@ -58,9 +58,9 @@ def reparameterize_by_gamma(coords, gamma):
         siz = 0
     if siz > 0:
         for i in xrange(0, dim):
-                coords[i, :] = np.interp(gamma, np.linspace(0, 2*pi, siz), coords[i, :])
+                coords[i, :] = np.interp(gamma, np.linspace(0, 2*math.pi, siz), coords[i, :])
     else:
-        coords = np.interp(gamma, np.linspace(0, 2*pi, dim), coords[:])
+        coords = np.interp(gamma, np.linspace(0, 2*math.pi, dim), coords[:])
     return coords
 
 def project_tangent_d_q(u, d_q):
