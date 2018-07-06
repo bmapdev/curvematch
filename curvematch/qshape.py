@@ -200,7 +200,7 @@ class QShape(object):
         d = v.shape[0]
 
         for i in xrange(d):
-            np.gradient(v[i, :], 2*pi/(self.siz()-1))
+            vdiff[i, :] = np.gradient(v[i, :], 2*pi/(self.siz()-1))
         vdiff = np.zeros(v.shape)
         d_q = np.zeros((self.dim(), self.siz(), d))
         for i in xrange(d):
