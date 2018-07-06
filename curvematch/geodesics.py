@@ -249,7 +249,7 @@ def compute_for_open_curves_elastic(q1, q2, settings, rotation=True, linear=Fals
 
             #if sum(np.greater(0, gamma_n)) >= 1 or sum(np.greater(0, np.diff(gamma_n))):
             #    raise ValueError("Gamma is INVALID")
-            q2n.group_action_by_gamma(gamma_n.flatten())
+            q2n = q2n.group_action_by_gamma(gamma_n.flatten())
             q2n.project_b()
             i += 1
             if i > 1:
